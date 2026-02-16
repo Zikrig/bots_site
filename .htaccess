@@ -1,0 +1,22 @@
+# Включить перезапись
+RewriteEngine On
+RewriteBase /
+
+# API: все запросы /api/v1/* отдаём в api.php
+RewriteRule ^api/v1/(.*)$ api.php?path=$1 [L,QSA]
+
+# Главная — статика из public/
+RewriteRule ^$ public/index.html [L]
+
+# Админка — статические HTML без .html в URL
+RewriteRule ^admin/?$ /admin/login [R=302,L]
+RewriteRule ^admin/login$ public/admin/login.html [L]
+RewriteRule ^admin/dashboard$ public/admin/dashboard.html [L]
+RewriteRule ^admin/products$ public/admin/products.html [L]
+RewriteRule ^admin/leads$ public/admin/leads.html [L]
+
+# Статика: если файл или каталог есть в public/ — отдать
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f
+RewriteRule ^(.*)$ public/$1 [L]

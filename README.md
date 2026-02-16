@@ -4,9 +4,11 @@
 
 ## Стек
 
-- **Backend:** FastAPI, SQLAlchemy 2.0 (async), MySQL (asyncmy)
-- **Фронтенд:** Jinja2 + Tailwind CSS + HTMX
-- **Аутентификация админов:** JWT в httpOnly cookie
+Два варианта бэкенда (без Node):
+
+- **Вариант 1 — PHP:** статика в `public/` + API в `api.php` (см. [README_PHP.md](README_PHP.md)). Работает по 80/443, без отдельного порта.
+- **Вариант 2 — Python:** FastAPI, SQLAlchemy 2.0 (async), MySQL (asyncmy). Фронт: Jinja2 + Tailwind или статика из `public/`.
+- **Аутентификация админов:** в PHP — сессия, в Python — JWT в httpOnly cookie.
 
 ## Быстрый старт
 
