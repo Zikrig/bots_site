@@ -1,0 +1,12 @@
+# Если корень сайта = public/, эти правила дают «красивые» URL без .html
+RewriteEngine On
+RewriteBase /
+
+# /admin → редирект на /admin/login
+RewriteRule ^admin/?$ /admin/login [R=302,L]
+
+# Админка без .html в URL
+RewriteRule ^admin/login$ admin/login.html [L]
+RewriteRule ^admin/dashboard$ admin/dashboard.html [L]
+RewriteRule ^admin/products$ admin/products.html [L]
+RewriteRule ^admin/leads$ admin/leads.html [L]

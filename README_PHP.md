@@ -17,7 +17,8 @@
 
 ## Установка на хостинге (Рег.ру и др.)
 
-1. **Корень сайта** — каталог проекта (там, где лежат `api.php`, `public/`, `php/`, `.htaccess`).
+1. **Корень сайта** — каталог проекта (там, где лежат `api.php`, `public/`, `php/`, `.htaccess`).  
+   Если хостинг позволяет указать только папку `public/` как корень — используйте её; в `public/` лежит свой `.htaccess` для URL вида `/admin/login` без `.html`.
 
 2. **Файл `.env`** в корне проекта (как и раньше):
    ```env
@@ -44,9 +45,11 @@
    location / {
        try_files $uri $uri/ /public/index.html;
    }
-   location /admin/ {
-       try_files $uri /public/admin/$uri.html;
-   }
+   location /admin/login { alias /путь/к/проекту/public/admin/login.html; }
+   location /admin/dashboard { alias /путь/к/проекту/public/admin/dashboard.html; }
+   location /admin/products { alias /путь/к/проекту/public/admin/products.html; }
+   location /admin/leads { alias /путь/к/проекту/public/admin/leads.html; }
+   location = /admin { return 302 /admin/login; }
    ```
    (пути и параметр `path` можно подстроить под ваш конфиг.)
 
