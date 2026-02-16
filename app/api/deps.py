@@ -3,16 +3,12 @@ from datetime import datetime, timedelta
 from typing_extensions import Annotated
 
 from fastapi import Depends, Request, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPCookie
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from app.database import get_db
 from app.models import Admin
 from app.services.auth import decode_access_token
-
-security = HTTPBearer(auto_error=False)
-cookie_scheme = HTTPCookie(auto_error=False)
 
 # In-memory rate limits (use Redis in production)
 _lead_ips: dict[str, list[datetime]] = defaultdict(list)
