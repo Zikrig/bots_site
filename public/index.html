@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram-боты под заказ — каталог и заявка</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#e6f4ff', 100: '#bae0ff', 200: '#7cc4fa', 300: '#47a3f3', 400: '#2186eb', 500: '#0967d2', 600: '#0552b5', 700: '#03449e', 800: '#01337d', 900: '#002159' },
+                        surface: { DEFAULT: '#f8fafc', dark: '#0f172a' }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'], display: ['Outfit', 'Plus Jakarta Sans', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>html { scroll-behavior: smooth; } body { font-feature-settings: "ss01", "ss02"; }</style>
+</head>
+<body class="bg-surface text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+    <header class="border-b border-slate-200/80 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <a href="/" class="font-display font-semibold text-xl text-slate-900 tracking-tight">Боты</a>
+            <nav class="flex items-center gap-6">
+                <a href="/#products" class="text-slate-600 hover:text-brand-600 transition">Каталог</a>
+                <a href="/#request" class="text-slate-600 hover:text-brand-600 transition">Оставить заявку</a>
+            </nav>
+        </div>
+    </header>
+    <main class="flex-1">
+        <section class="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-brand-50/30 py-20 sm:py-28">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 relative">
+                <div class="max-w-2xl">
+                    <h1 class="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-slate-900 tracking-tight leading-tight">Telegram-боты под ваш бизнес</h1>
+                    <p class="mt-6 text-lg sm:text-xl text-slate-600 leading-relaxed">Доставка, поддержка, бронирование, магазин — соберём бота под задачу. Оставьте заявку, перезвоним и обсудим проект.</p>
+                    <div class="mt-10">
+                        <a href="#request" class="inline-flex items-center gap-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 py-3.5 shadow-lg shadow-brand-500/25 transition">Оставить заявку <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="products" class="py-16 sm:py-24 bg-white">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6">
+                <h2 class="font-display font-semibold text-3xl sm:text-4xl text-slate-900 mb-4">Каталог типов ботов</h2>
+                <p class="text-slate-600 text-lg max-w-2xl mb-12">Выберите направление — мы доработаем под ваши процессы и запустим в Telegram.</p>
+                <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                    <p class="col-span-full text-slate-500">Загрузка…</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="request" class="py-16 sm:py-24 bg-slate-50 border-t border-slate-200">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6">
+                <div class="max-w-xl mx-auto text-center">
+                    <h2 class="font-display font-semibold text-3xl sm:text-4xl text-slate-900 mb-4">Оставить заявку на обратный звонок</h2>
+                    <p class="text-slate-600 mb-10">Укажите телефон — мы перезвоним и обсудим задачу.</p>
+                    <div id="lead-form-container" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 text-left">
+                        <form id="lead-form" class="space-y-5">
+                            <div>
+                                <label for="phone" class="block text-sm font-medium text-slate-700 mb-1.5">Телефон <span class="text-red-500">*</span></label>
+                                <input type="tel" id="phone" name="phone" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition" placeholder="+7 (999) 123-45-67" maxlength="20">
+                            </div>
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-slate-700 mb-1.5">Имя</label>
+                                <input type="text" id="name" name="name" class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition" placeholder="Как к вам обращаться" maxlength="255">
+                            </div>
+                            <div>
+                                <label for="comment" class="block text-sm font-medium text-slate-700 mb-1.5">Комментарий</label>
+                                <textarea id="comment" name="comment" rows="3" class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition resize-none" placeholder="Кратко опишите задачу (необязательно)" maxlength="2000"></textarea>
+                            </div>
+                            <p id="lead-error" class="text-red-600 text-sm hidden"></p>
+                            <button type="submit" id="lead-submit" class="w-full rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-medium py-3.5 flex items-center justify-center gap-2 transition disabled:opacity-50">
+                                <span id="lead-spinner" class="hidden items-center gap-1"><svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Отправка…</span>
+                                <span id="lead-btn-text">Отправить заявку</span>
+                            </button>
+                        </form>
+                    </div>
+                    <template id="lead-success-tpl">
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 text-center">
+                            <div class="w-14 h-14 rounded-full bg-brand-100 flex items-center justify-center mx-auto mb-4"><svg class="w-7 h-7 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
+                            <h3 class="font-display font-semibold text-xl text-slate-900">Спасибо!</h3>
+                            <p class="mt-2 text-slate-600">Мы перезвоним в ближайшее время.</p>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="border-t border-slate-200 bg-slate-50 py-8 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center text-slate-500 text-sm">© 2025 Telegram-боты под заказ. Все права защищены.</div>
+    </footer>
+    <script>
+(function() {
+    var API = '/api/v1';
+    function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    fetch(API + '/products').then(function(r) { return r.json(); }).then(function(products) {
+        var grid = document.getElementById('products-grid');
+        if (!products || products.length === 0) {
+            grid.innerHTML = '<p class="col-span-full text-center py-12 text-slate-500">Пока нет типов ботов в каталоге. Скоро появятся.</p>';
+            return;
+        }
+        grid.innerHTML = products.map(function(p) {
+            var short = p.short_description || (p.description || '').slice(0, 200);
+            var desc = p.description || p.short_description || 'Нет описания.';
+            return '<article class="group rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm hover:shadow-xl hover:border-brand-200/60 transition-all duration-300 flex flex-col">' +
+                '<div class="aspect-[4/3] rounded-xl bg-slate-100 overflow-hidden mb-5">' + (p.image_url ? '<img src="' + esc(p.image_url) + '" alt="' + esc(p.title) + '" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">' : '<div class="w-full h-full flex items-center justify-center text-slate-400"><svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div>') + '</div>' +
+                '<h3 class="font-display font-semibold text-xl text-slate-900">' + esc(p.title) + '</h3>' +
+                '<p class="mt-2 text-slate-600 text-sm leading-relaxed line-clamp-3">' + esc(short) + '</p>' +
+                '<div class="mt-4 pt-4 border-t border-slate-100 flex-1 flex items-end"><button type="button" onclick="document.getElementById(\'modal-' + p.id + '\').classList.remove(\'hidden\')" class="text-brand-600 hover:text-brand-700 font-medium text-sm inline-flex items-center gap-1">Подробнее <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button></div>' +
+                '<div id="modal-' + p.id + '" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-modal="true"><div class="flex min-h-full items-center justify-center p-4"><div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="document.getElementById(\'modal-' + p.id + '\').classList.add(\'hidden\')"></div><div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-8 max-h-[85vh] overflow-y-auto"><h3 class="font-display font-semibold text-xl text-slate-900">' + esc(p.title) + '</h3><p class="mt-4 text-slate-600 leading-relaxed whitespace-pre-line">' + esc(desc) + '</p><button type="button" onclick="document.getElementById(\'modal-' + p.id + '\').classList.add(\'hidden\')" class="mt-6 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2.5 transition">Закрыть</button></div></div></div></article>';
+        }).join('');
+    }).catch(function() {
+        document.getElementById('products-grid').innerHTML = '<p class="col-span-full text-center py-12 text-slate-500">Ошибка загрузки каталога.</p>';
+    });
+
+    var form = document.getElementById('lead-form');
+    var container = document.getElementById('lead-form-container');
+    var spinner = document.getElementById('lead-spinner');
+    var btnText = document.getElementById('lead-btn-text');
+    var submitBtn = document.getElementById('lead-submit');
+    var errEl = document.getElementById('lead-error');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        errEl.classList.add('hidden');
+        submitBtn.disabled = true;
+        spinner.classList.remove('hidden');
+        spinner.classList.add('flex');
+        btnText.classList.add('hidden');
+        fetch(API + '/leads', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                phone: document.getElementById('phone').value.trim(),
+                name: document.getElementById('name').value.trim() || null,
+                comment: document.getElementById('comment').value.trim() || null
+            })
+        }).then(function(r) {
+            return r.json().then(function(data) {
+                if (r.ok) {
+                    var tpl = document.getElementById('lead-success-tpl');
+                    container.innerHTML = '';
+                    container.appendChild(tpl.content.cloneNode(true));
+                } else {
+                    var msg = (data && data.detail) ? (typeof data.detail === 'string' ? data.detail : 'Ошибка отправки') : 'Ошибка отправки';
+                    errEl.textContent = msg;
+                    errEl.classList.remove('hidden');
+                }
+            });
+        }).catch(function() {
+            errEl.textContent = 'Ошибка сети. Попробуйте позже.';
+            errEl.classList.remove('hidden');
+        }).finally(function() {
+            submitBtn.disabled = false;
+            spinner.classList.add('hidden');
+            spinner.classList.remove('flex');
+            btnText.classList.remove('hidden');
+        });
+    });
+})();
+    </script>
+</body>
+</html>

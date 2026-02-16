@@ -1,6 +1,6 @@
 # Боты — витрина Telegram-ботов (Node.js)
 
-Версия проекта на **Node.js** (Express, Sequelize, EJS). API и страницы соответствуют Python-версии.
+Версия на **Node.js**: бэкенд только **API** (Express, Sequelize), фронт — **статический** (HTML/CSS/JS в `public/`). Можно отдавать статику с любого хостинга или nginx, а API — отдельно.
 
 ## Требования
 
@@ -52,13 +52,13 @@ DATABASE_URL=sqlite://./bots_site.db
 
 ## Структура (Node)
 
-- `src/app.js` — точка входа, Express, маршруты страниц и API
+- **`public/`** — статический фронт: `index.html`, `admin/login.html`, `admin/dashboard.html`, `admin/products.html`, `admin/leads.html`. Данные подгружаются через API.
+- `src/app.js` — только API + раздача статики и чистых URL админки
 - `src/config.js` — настройки из .env
 - `src/database.js` — Sequelize (MySQL/SQLite)
 - `src/models/` — Admin, Product, Lead
 - `src/routes/` — products, leads, admin (API)
-- `src/middleware/` — auth (JWT из cookie), rateLimit (лимиты заявок и входа)
+- `src/middleware/` — auth (JWT из cookie), rateLimit
 - `src/services/auth.js` — bcrypt, JWT
-- `src/views/` — EJS-шаблоны (главная, админка)
 
-API совместим с фронтом из Python-версии: те же пути и форматы ответов.
+**Разделение:** статику можно вынести на nginx/CDN; тогда Node слушает только `/api/v1/*` (и при необходимости CORS для другого домена).

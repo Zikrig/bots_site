@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дашборд — Админка</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { brand: { 200: '#7cc4fa', 500: '#0967d2', 600: '#0552b5' } } } } };</script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen">
+    <div class="flex min-h-screen">
+        <aside class="w-56 bg-slate-900 text-white flex-shrink-0">
+            <div class="p-4 border-b border-slate-700"><a href="/admin/dashboard" class="font-semibold text-lg">Админка</a></div>
+            <nav class="p-2">
+                <a href="/admin/dashboard" class="block rounded-lg px-3 py-2 bg-slate-800 text-white">Дашборд</a>
+                <a href="/admin/products" class="block rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white transition">Товары</a>
+                <a href="/admin/leads" class="block rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white transition">Заявки</a>
+                <a href="/" class="block rounded-lg px-3 py-2 text-slate-400 hover:bg-slate-800 hover:text-white transition mt-4">На сайт</a>
+                <button type="button" onclick="logout()" class="block w-full text-left rounded-lg px-3 py-2 text-slate-400 hover:bg-slate-800 hover:text-white transition mt-4">Выйти</button>
+            </nav>
+        </aside>
+        <main class="flex-1 overflow-auto">
+            <div class="p-6 sm:p-8">
+                <h1 class="text-2xl font-semibold text-slate-900 mb-8">Дашборд</h1>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl">
+                    <a href="/admin/products" class="block rounded-xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md hover:border-brand-200 transition">
+                        <h2 class="font-semibold text-lg text-slate-900">Товары</h2>
+                        <p class="mt-1 text-slate-600 text-sm">Управление каталогом типов ботов: добавление, редактирование, порядок отображения.</p>
+                    </a>
+                    <a href="/admin/leads" class="block rounded-xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md hover:border-brand-200 transition">
+                        <h2 class="font-semibold text-lg text-slate-900">Заявки</h2>
+                        <p class="mt-1 text-slate-600 text-sm">Просмотр заявок на обратный звонок и смена статусов.</p>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+    function logout() { fetch('/api/v1/admin/logout', { method: 'POST', credentials: 'include' }).then(function() { window.location.href = '/admin/login'; }); }
+    fetch('/api/v1/admin/me', { credentials: 'include' }).then(function(r) { if (r.status === 401) window.location.href = '/admin/login'; });
+    </script>
+</body>
+</html>
