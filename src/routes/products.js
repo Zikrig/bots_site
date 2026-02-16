@@ -1,6 +1,7 @@
-import { Router } from 'express';
-import { Product } from '../models/index.js';
-import { getCurrentAdmin } from '../middleware/auth.js';
+const { Router } = require('express');
+const { Product } = require('../models');
+const { getCurrentAdmin } = require('../middleware/auth');
+
 const router = Router();
 const routerAdmin = Router();
 
@@ -19,32 +20,30 @@ function productToRead(p) {
   };
 }
 
-// Public: list visible products
-router.get('/products', async (req, res) => {
+router.get('/products', async function (req, res) {
   const list = await Product.findAll({
     where: { is_visible: true },
-    order: [
-      ['sort_order', 'ASC'],
-      ['id', 'ASC'],
-    ],
+    order: [['sort_order', 'ASC'], ['id', 'ASC']],
   });
   res.json(list.map(productToRead));
 });
 
-// Admin: list all products
-routerAdmin.get('/admin/products', getCurrentAdmin, async (req, res) => {
+routerAdmin.get('/admin/products', getCurrentAdmin, async function (req, res) {
   const list = await Product.findAll({
-    order: [
-      ['sort_order', 'ASC'],
-      ['id', 'ASC'],
-    ],
+    order: [['sort_order', 'ASC'], ['id', 'ASC']],
   });
   res.json(list.map(productToRead));
 });
 
-// Admin: create product
-routerAdmin.post('/admin/products', getCurrentAdmin, async (req, res) => {
-  const { title, slug, description, short_description, image_url, sort_order, is_visible } = req.body;
+routerAdmin.post('/admin/products', getCurrentAdmin, async function (req, res) {
+  const body = req.body;
+  const title = body.title;
+  const slug = body.slug;
+  const description = body.description;
+  const short_description = body.short_description;
+  const image_url = body.image_url;
+  const sort_order = body.sort_order;
+  const is_visible = body.is_visible;
   if (!title || String(title).trim().length === 0) {
     return res.status(400).json({ detail: 'Название обязательно' });
   }
@@ -60,41 +59,40 @@ routerAdmin.post('/admin/products', getCurrentAdmin, async (req, res) => {
   res.status(201).json(productToRead(product));
 });
 
-// Admin: get one product
-routerAdmin.get('/admin/products/:product_id', getCurrentAdmin, async (req, res) => {
+routerAdmin.get('/admin/products/:product_id', getCurrentAdmin, async function (req, res) {
   const product = await Product.findByPk(req.params.product_id);
   if (!product) return res.status(404).json({ detail: 'Товар не найден' });
   res.json(productToRead(product));
 });
 
-// Admin: update product
-routerAdmin.patch('/admin/products/:product_id', getCurrentAdmin, async (req, res) => {
+routerAdmin.patch('/admin/products/:product_id', getCurrentAdmin, async function (req, res) {
   const product = await Product.findByPk(req.params.product_id);
   if (!product) return res.status(404).json({ detail: 'Товар не найден' });
-  const { title, slug, description, short_description, image_url, sort_order, is_visible } = req.body;
-  if (title !== undefined) product.title = String(title).trim();
-  if (slug !== undefined) product.slug = slug ? String(slug).trim() : null;
-  if (description !== undefined) product.description = String(description);
-  if (short_description !== undefined) product.short_description = String(short_description).slice(0, 500);
-  if (image_url !== undefined) product.image_url = String(image_url).slice(0, 512);
-  if (sort_order !== undefined) product.sort_order = parseInt(sort_order, 10);
-  if (is_visible !== undefined) product.is_visible = Boolean(is_visible);
+  const body = req.body;
+  if (body.title !== undefined) product.title = String(body.title).trim();
+  if (body.slug !== undefined) product.slug = body.slug ? String(body.slug).trim() : null;
+  if (body.description !== undefined) product.description = String(body.description);
+  if (body.short_description !== undefined) product.short_description = String(body.short_description).slice(0, 500);
+  if (body.image_url !== undefined) product.image_url = String(body.image_url).slice(0, 512);
+  if (body.sort_order !== undefined) product.sort_order = parseInt(body.sort_order, 10);
+  if (body.is_visible !== undefined) product.is_visible = Boolean(body.is_visible);
   await product.save();
   res.json(productToRead(product));
 });
 
-// Admin: delete product
-routerAdmin.delete('/admin/products/:product_id', getCurrentAdmin, async (req, res) => {
+routerAdmin.delete('/admin/products/:product_id', getCurrentAdmin, async function (req, res) {
   const product = await Product.findByPk(req.params.product_id);
   if (!product) return res.status(404).json({ detail: 'Товар не найден' });
   await product.destroy();
   res.status(204).send();
 });
 
-// Admin: reorder products
-routerAdmin.patch('/admin/products/reorder', getCurrentAdmin, async (req, res) => {
+routerAdmin.patch('/admin/products/reorder', getCurrentAdmin, async function (req, res) {
   const items = Array.isArray(req.body) ? req.body : [];
-  for (const { id, sort_order } of items) {
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const id = item.id;
+    const sort_order = item.sort_order;
     if (id != null && sort_order != null) {
       await Product.update(
         { sort_order: parseInt(sort_order, 10) },
@@ -105,4 +103,5 @@ routerAdmin.patch('/admin/products/reorder', getCurrentAdmin, async (req, res) =
   res.json({ ok: true });
 });
 
-export { router, routerAdmin };
+exports.router = router;
+exports.routerAdmin = routerAdmin;

@@ -1,11 +1,11 @@
-import 'dotenv/config';
+require('dotenv').config();
 
 // Node uses "mysql://", Python had "mysql+asyncmy://"
 const databaseUrl = (process.env.DATABASE_URL || 'sqlite://./bots_site.db')
   .replace(/^mysql\+asyncmy:\/\//, 'mysql://');
 
-export const config = {
-  databaseUrl,
+exports.config = {
+  databaseUrl: databaseUrl,
   secretKey: process.env.SECRET_KEY || 'dev-secret-change-in-production',
   adminUsername: process.env.ADMIN_USERNAME || 'admin',
   adminPassword: process.env.ADMIN_PASSWORD || 'change_me',

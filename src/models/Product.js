@@ -1,5 +1,5 @@
-import { DataTypes } from 'sequelize';
-import { sequelize } from '../database.js';
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../database');
 
 const Product = sequelize.define('Product', {
   id: {
@@ -55,4 +55,4 @@ const Product = sequelize.define('Product', {
   createdAt: 'created_at',
 });
 
-export default Product;
+module.exports = Product;

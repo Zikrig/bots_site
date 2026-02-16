@@ -1,6 +1,6 @@
-import { config } from '../config.js';
+const { config } = require('../config');
 
-const leadIps = new Map(); // ip -> [timestamps]
+const leadIps = new Map();
 const loginAttempts = new Map();
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -10,11 +10,11 @@ function cleanOld(entries, windowMs) {
   while (entries.length && entries[0] < cutoff) entries.shift();
 }
 
-export function getClientIp(req) {
-  return req.ip || req.connection?.remoteAddress || 'unknown';
+function getClientIp(req) {
+  return req.ip || (req.connection && req.connection.remoteAddress) || 'unknown';
 }
 
-export function checkLeadRateLimit(req, res, next) {
+function checkLeadRateLimit(req, res, next) {
   const ip = getClientIp(req);
   if (!leadIps.has(ip)) leadIps.set(ip, []);
   const entries = leadIps.get(ip);
@@ -26,7 +26,7 @@ export function checkLeadRateLimit(req, res, next) {
   next();
 }
 
-export function checkLoginRateLimit(req, res, next) {
+function checkLoginRateLimit(req, res, next) {
   const ip = getClientIp(req);
   if (!loginAttempts.has(ip)) loginAttempts.set(ip, []);
   const entries = loginAttempts.get(ip);
@@ -38,3 +38,7 @@ export function checkLoginRateLimit(req, res, next) {
   entries.push(Date.now());
   next();
 }
+
+exports.getClientIp = getClientIp;
+exports.checkLeadRateLimit = checkLeadRateLimit;
+exports.checkLoginRateLimit = checkLoginRateLimit;

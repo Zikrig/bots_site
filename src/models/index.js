@@ -1,5 +1,9 @@
-import Admin from './Admin.js';
-import Product from './Product.js';
-import Lead, { LeadStatus } from './Lead.js';
+const Admin = require('./Admin');
+const Product = require('./Product');
+const Lead = require('./Lead');
+const LeadStatus = require('./Lead').LeadStatus;
 
-export { Admin, Product, Lead, LeadStatus };
+exports.Admin = Admin;
+exports.Product = Product;
+exports.Lead = Lead;
+exports.LeadStatus = LeadStatus;

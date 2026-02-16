@@ -1,7 +1,7 @@
-import { DataTypes } from 'sequelize';
-import { sequelize } from '../database.js';
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../database');
 
-export const LeadStatus = {
+const LeadStatus = {
   new: 'new',
   contacted: 'contacted',
   closed: 'closed',
@@ -30,7 +30,7 @@ const Lead = sequelize.define('Lead', {
     defaultValue: DataTypes.NOW,
   },
   status: {
-    type: DataTypes.ENUM(...Object.values(LeadStatus)),
+    type: DataTypes.ENUM('new', 'contacted', 'closed'),
     allowNull: false,
     defaultValue: LeadStatus.new,
   },
@@ -40,4 +40,5 @@ const Lead = sequelize.define('Lead', {
   timestamps: false,
 });
 
-export default Lead;
+module.exports = Lead;
+module.exports.LeadStatus = LeadStatus;
