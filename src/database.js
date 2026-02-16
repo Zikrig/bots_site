@@ -36,4 +36,3 @@ if (isSqlite) {
 }
 
 exports.sequelize = sequelize;
-module.exports = sequelize;
