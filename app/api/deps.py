@@ -1,6 +1,6 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Annotated
+from typing_extensions import Annotated
 
 from fastapi import Depends, Request, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPCookie

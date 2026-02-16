@@ -5,6 +5,7 @@ aiosqlite==0.20.0
 asyncmy==0.2.9
 alembic==1.14.0
 pymysql==1.1.0
+typing_extensions>=4.0.0
 pydantic[email-validator]==2.10.3
 pydantic-settings==2.6.1
 python-multipart==0.0.17
