@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
 from pathlib import Path
@@ -55,7 +55,7 @@ app.include_router(admin_api.router, prefix="/api/v1")
 # --- Pages (Jinja2) ---
 
 @app.get("/")
-async def index(request):
+async def index(req: Request):
     from app.database import async_session_maker
     from app.models import Product
     from sqlalchemy import select
@@ -68,31 +68,31 @@ async def index(request):
         products_list = result.scalars().all()
     return templates.TemplateResponse(
         "index.html",
-        {"request": request, "products": products_list},
+        {"request": req, "products": products_list},
     )
 
 
 @app.get("/admin")
-async def admin_redirect(request):
+async def admin_redirect(req: Request):
     from fastapi.responses import RedirectResponse
     return RedirectResponse(url="/admin/login", status_code=302)
 
 
 @app.get("/admin/login")
-async def admin_login_page(request):
-    return templates.TemplateResponse("admin/login.html", {"request": request})
+async def admin_login_page(req: Request):
+    return templates.TemplateResponse("admin/login.html", {"request": req})
 
 
 @app.get("/admin/dashboard")
-async def admin_dashboard(request):
-    return templates.TemplateResponse("admin/dashboard.html", {"request": request})
+async def admin_dashboard(req: Request):
+    return templates.TemplateResponse("admin/dashboard.html", {"request": req})
 
 
 @app.get("/admin/products")
-async def admin_products_page(request):
-    return templates.TemplateResponse("admin/products.html", {"request": request})
+async def admin_products_page(req: Request):
+    return templates.TemplateResponse("admin/products.html", {"request": req})
 
 
 @app.get("/admin/leads")
-async def admin_leads_page(request):
-    return templates.TemplateResponse("admin/leads.html", {"request": request})
+async def admin_leads_page(req: Request):
+    return templates.TemplateResponse("admin/leads.html", {"request": req})
