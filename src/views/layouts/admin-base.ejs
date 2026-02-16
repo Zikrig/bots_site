@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'Админка' %></title>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#e6f4ff', 100: '#bae0ff', 200: '#7cc4fa', 300: '#47a3f3',
+                            400: '#2186eb', 500: '#0967d2', 600: '#0552b5', 700: '#03449e',
+                            800: '#01337d', 900: '#002159',
+                        }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <%- typeof head !== 'undefined' ? head : '' %>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen">
+    <div class="flex min-h-screen">
+        <aside class="w-56 bg-slate-900 text-white flex-shrink-0">
+            <div class="p-4 border-b border-slate-700">
+                <a href="/admin/dashboard" class="font-semibold text-lg">Админка</a>
+            </div>
+            <nav class="p-2">
+                <a href="/admin/dashboard" class="block rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white transition">Дашборд</a>
+                <a href="/admin/products" class="block rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white transition">Товары</a>
+                <a href="/admin/leads" class="block rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white transition">Заявки</a>
+                <a href="/" class="block rounded-lg px-3 py-2 text-slate-400 hover:bg-slate-800 hover:text-white transition mt-4">На сайт</a>
+                <button type="button" onclick="logout()" class="block w-full text-left rounded-lg px-3 py-2 text-slate-400 hover:bg-slate-800 hover:text-white transition mt-4">Выйти</button>
+            </nav>
+        </aside>
+        <main class="flex-1 overflow-auto">
+            <%- body %>
+        </main>
+    </div>
+    <script>
+    function logout() {
+        fetch('/api/v1/admin/logout', { method: 'POST', credentials: 'include' })
+            .then(function() { window.location.href = '/admin/login'; });
+    }
+    fetch('/api/v1/admin/me', { credentials: 'include' })
+        .then(function(r) { if (r.status === 401) window.location.href = '/admin/login'; });
+    </script>
+    <%- typeof scripts !== 'undefined' ? scripts : '' %>
+</body>
+</html>
