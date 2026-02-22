@@ -99,9 +99,9 @@
     <script>
 (function() {
     var BASE = '/bots_site/public';
-    var API = '/bots_site/api/v1';
+    function apiUrl(path) { return '/bots_site/api.php?path=' + encodeURIComponent(path); }
     function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-    fetch(API + '/products').then(function(r) { return r.json(); }).then(function(products) {
+    fetch(apiUrl('products')).then(function(r) { return r.json(); }).then(function(products) {
         var grid = document.getElementById('products-grid');
         if (!products || products.length === 0) {
             grid.innerHTML = '<p class="col-span-full text-center py-12 text-slate-500">Пока нет типов ботов в каталоге. Скоро появятся.</p>';
@@ -134,7 +134,7 @@
         spinner.classList.remove('hidden');
         spinner.classList.add('flex');
         btnText.classList.add('hidden');
-        fetch(API + '/leads', {
+        fetch(apiUrl('leads'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

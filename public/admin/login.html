@@ -39,8 +39,8 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     err.classList.add('hidden');
     btn.disabled = true;
     var BASE = '/bots_site/public';
-    var API = '/bots_site/api/v1';
-    fetch(API + '/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ username: document.getElementById('username').value, password: document.getElementById('password').value }) })
+    function apiUrl(path) { return '/bots_site/api.php?path=' + encodeURIComponent(path); }
+    fetch(apiUrl('admin/login'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ username: document.getElementById('username').value, password: document.getElementById('password').value }) })
     .then(function(r) { return r.json().then(function(data) { return { ok: r.ok, data: data }; }); })
     .then(function(res) {
         if (res.ok) window.location.href = BASE + '/admin/dashboard.html';

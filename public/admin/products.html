@@ -50,12 +50,12 @@
     </div>
     <script>
 var BASE = '/bots_site/public';
-var API = '/bots_site/api/v1';
-function logout() { fetch(API + '/admin/logout', { method: 'POST', credentials: 'include' }).then(function() { window.location.href = BASE + '/admin/login.html'; }); }
-fetch(API + '/admin/me', { credentials: 'include' }).then(function(r) { if (r.status === 401) window.location.href = BASE + '/admin/login.html'; });
+function apiUrl(path) { return '/bots_site/api.php?path=' + encodeURIComponent(path); }
+function logout() { fetch(apiUrl('admin/logout'), { method: 'POST', credentials: 'include' }).then(function() { window.location.href = BASE + '/admin/login.html'; }); }
+fetch(apiUrl('admin/me'), { credentials: 'include' }).then(function(r) { if (r.status === 401) window.location.href = BASE + '/admin/login.html'; });
 function escapeHtml(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 function loadProducts() {
-    fetch(API + '/admin/products', { credentials: 'include' }).then(function(r) { if (r.status === 401) { window.location.href = BASE + '/admin/login.html'; return []; } return r.json(); }).then(function(list) {
+    fetch(apiUrl('admin/products'), { credentials: 'include' }).then(function(r) { if (r.status === 401) { window.location.href = BASE + '/admin/login.html'; return []; } return r.json(); }).then(function(list) {
         var el = document.getElementById('products-list');
         if (!list || list.length === 0) { el.innerHTML = '<p class="text-slate-500">Нет товаров. Добавьте первый.</p>'; return; }
         el.innerHTML = list.map(function(p) {
@@ -76,13 +76,13 @@ function openProductModal(product) {
     document.getElementById('product-modal').classList.remove('hidden');
 }
 function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
-function editProduct(id) { fetch(API + '/admin/products/' + id, { credentials: 'include' }).then(function(r) { return r.json(); }).then(function(p) { openProductModal(p); }); }
-function deleteProduct(id, title) { if (!confirm('Удалить товар «' + title + '»?')) return; fetch(API + '/admin/products/' + id, { method: 'DELETE', credentials: 'include' }).then(function(r) { if (r.status === 204) loadProducts(); }); }
+function editProduct(id) { fetch(apiUrl('admin/products/' + id), { credentials: 'include' }).then(function(r) { return r.json(); }).then(function(p) { openProductModal(p); }); }
+function deleteProduct(id, title) { if (!confirm('Удалить товар «' + title + '»?')) return; fetch(apiUrl('admin/products/' + id), { method: 'DELETE', credentials: 'include' }).then(function(r) { if (r.status === 204) loadProducts(); }); }
 document.getElementById('product-form').addEventListener('submit', function(e) {
     e.preventDefault();
     var id = document.getElementById('product-id').value;
     var payload = { title: document.getElementById('product-title').value.trim(), slug: document.getElementById('product-slug').value.trim() || null, short_description: document.getElementById('product-short').value.trim() || '', description: document.getElementById('product-description').value.trim() || '', image_url: document.getElementById('product-image').value.trim() || '', is_visible: document.getElementById('product-visible').checked };
-    var url = API + '/admin/products' + (id ? '/' + id : ''); var method = id ? 'PATCH' : 'POST';
+    var url = apiUrl('admin/products' + (id ? '/' + id : '')); var method = id ? 'PATCH' : 'POST';
     fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(payload) }).then(function(r) { if (r.ok) { closeProductModal(); loadProducts(); } else r.json().then(function(d) { alert(d.detail || 'Ошибка'); }); });
 });
 loadProducts();

@@ -37,13 +37,13 @@
     </div>
     <script>
 var BASE = '/bots_site/public';
-var API = '/bots_site/api/v1';
+function apiUrl(path) { return '/bots_site/api.php?path=' + encodeURIComponent(path); }
 var currentStatus = '';
-function logout() { fetch(API + '/admin/logout', { method: 'POST', credentials: 'include' }).then(function() { window.location.href = BASE + '/admin/login.html'; }); }
-fetch(API + '/admin/me', { credentials: 'include' }).then(function(r) { if (r.status === 401) window.location.href = BASE + '/admin/login.html'; });
+function logout() { fetch(apiUrl('admin/logout'), { method: 'POST', credentials: 'include' }).then(function() { window.location.href = BASE + '/admin/login.html'; }); }
+fetch(apiUrl('admin/me'), { credentials: 'include' }).then(function(r) { if (r.status === 401) window.location.href = BASE + '/admin/login.html'; });
 function escapeHtml(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 function loadLeads() {
-    var url = API + '/admin/leads' + (currentStatus ? '?status=' + currentStatus : '');
+    var url = apiUrl('admin/leads') + (currentStatus ? '&status=' + encodeURIComponent(currentStatus) : '');
     fetch(url, { credentials: 'include' }).then(function(r) { if (r.status === 401) { window.location.href = BASE + '/admin/login.html'; return []; } return r.json(); }).then(function(list) {
         var el = document.getElementById('leads-list');
         if (!list || list.length === 0) { el.innerHTML = '<p class="p-6 text-slate-500">Нет заявок.</p>'; return; }
@@ -54,7 +54,7 @@ function loadLeads() {
         }).join('') + '</tbody></table>';
     }).catch(function() { document.getElementById('leads-list').innerHTML = '<p class="p-6 text-red-600">Ошибка загрузки.</p>'; });
 }
-function setStatus(id, status) { fetch(API + '/admin/leads/' + id, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ status: status }) }).then(function(r) { if (r.ok) loadLeads(); }); }
+function setStatus(id, status) { fetch(apiUrl('admin/leads/' + id), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ status: status }) }).then(function(r) { if (r.ok) loadLeads(); }); }
 document.querySelectorAll('.filter-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
         document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('bg-brand-500', 'text-white'); b.classList.add('bg-slate-200', 'text-slate-700'); });

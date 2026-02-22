@@ -38,9 +38,9 @@
     </div>
     <script>
     var BASE = '/bots_site/public';
-    var API = '/bots_site/api/v1';
-    function logout() { fetch(API + '/admin/logout', { method: 'POST', credentials: 'include' }).then(function() { window.location.href = BASE + '/admin/login.html'; }); }
-    fetch(API + '/admin/me', { credentials: 'include' }).then(function(r) { if (r.status === 401) window.location.href = BASE + '/admin/login.html'; });
+    function apiUrl(path) { return '/bots_site/api.php?path=' + encodeURIComponent(path); }
+    function logout() { fetch(apiUrl('admin/logout'), { method: 'POST', credentials: 'include' }).then(function() { window.location.href = BASE + '/admin/login.html'; }); }
+    fetch(apiUrl('admin/me'), { credentials: 'include' }).then(function(r) { if (r.status === 401) window.location.href = BASE + '/admin/login.html'; });
     </script>
 </body>
 </html>
