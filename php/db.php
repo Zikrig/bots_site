@@ -72,6 +72,13 @@ $hasLeadAttachmentSize = $pdo->query("SHOW COLUMNS FROM leads LIKE 'attachment_s
 if (!$hasLeadAttachmentSize) {
     try { $pdo->exec("ALTER TABLE leads ADD COLUMN attachment_size BIGINT NULL"); } catch (PDOException $e) {}
 }
+// Миграция: корректное время создания заявок
+try {
+    $pdo->exec("UPDATE leads SET created_at = NOW() WHERE created_at = '0000-00-00 00:00:00' OR created_at IS NULL");
+    $pdo->exec("ALTER TABLE leads MODIFY created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP");
+} catch (PDOException $e) {
+    // игнорируем, если хостинг ограничивает MODIFY или в таблице нет проблемных данных
+}
 
 // Создать админа по умолчанию, если нет ни одного
 $stmt = $pdo->query("SELECT COUNT(*) FROM admins");

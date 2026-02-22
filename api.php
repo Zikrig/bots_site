@@ -135,7 +135,7 @@ if ($path === 'leads' && $method === 'POST') {
         $attachmentSize = $size;
     }
 
-    $st = $pdo->prepare("INSERT INTO leads (phone, name, comment, attachment_name, attachment_url, attachment_size) VALUES (?, ?, ?, ?, ?, ?)");
+    $st = $pdo->prepare("INSERT INTO leads (phone, name, comment, attachment_name, attachment_url, attachment_size, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
     $st->execute([$phone, $name ?: null, $comment ?: null, $attachmentName, $attachmentUrl, $attachmentSize]);
     $id = (int)$pdo->lastInsertId();
     $row = $pdo->query("SELECT id, phone, name, comment, attachment_name, attachment_url, attachment_size, created_at, status FROM leads WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
