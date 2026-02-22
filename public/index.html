@@ -137,6 +137,35 @@
         document.getElementById('order-error').classList.add('hidden');
         document.getElementById('order-modal').classList.remove('hidden');
     }
+    window.productModalData = {};
+    function openProductModal(id) {
+        var d = window.productModalData[id];
+        if (!d) return;
+        var el = document.getElementById('modal-' + id);
+        if (!el) return;
+        var mainImg = el.querySelector('.gallery-main');
+        if (mainImg && d.images.length) { mainImg.src = d.images[0]; mainImg.classList.remove('hidden'); } else if (mainImg) { mainImg.classList.add('hidden'); }
+        var prevBtn = el.querySelector('.gallery-prev');
+        var nextBtn = el.querySelector('.gallery-next');
+        if (prevBtn) prevBtn.classList.toggle('hidden', d.images.length <= 1);
+        if (nextBtn) nextBtn.classList.toggle('hidden', d.images.length <= 1);
+        d.currentIndex = 0;
+        el.classList.remove('hidden');
+    }
+    function galleryPrev(id) {
+        var d = window.productModalData[id];
+        if (!d || !d.images.length) return;
+        d.currentIndex = d.currentIndex <= 0 ? d.images.length - 1 : d.currentIndex - 1;
+        var el = document.getElementById('modal-' + id);
+        if (el) { var m = el.querySelector('.gallery-main'); if (m) m.src = d.images[d.currentIndex]; }
+    }
+    function galleryNext(id) {
+        var d = window.productModalData[id];
+        if (!d || !d.images.length) return;
+        d.currentIndex = d.currentIndex >= d.images.length - 1 ? 0 : d.currentIndex + 1;
+        var el = document.getElementById('modal-' + id);
+        if (el) { var m = el.querySelector('.gallery-main'); if (m) m.src = d.images[d.currentIndex]; }
+    }
     document.getElementById('order-modal-backdrop').addEventListener('click', function() { document.getElementById('order-modal').classList.add('hidden'); });
     document.getElementById('order-cancel').addEventListener('click', function() { document.getElementById('order-modal').classList.add('hidden'); });
     document.getElementById('order-form').addEventListener('submit', function(e) {
@@ -175,20 +204,35 @@
             var short = p.short_description || (p.description || '').slice(0, 200);
             var desc = p.description || p.short_description || 'Нет описания.';
             var images = allImages(p);
+            window.productModalData[p.id] = { images: images, title: p.title, desc: desc };
             var mainImg = images[0];
             var thumbs = images.length > 1 ? images.slice(1, 6) : [];
             var mainBlock = mainImg ? '<img src="' + esc(mainImg) + '" alt="' + esc(p.title) + '" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">' : '<div class="w-full h-full flex items-center justify-center text-slate-400"><svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div>';
             var thumbsHtml = thumbs.length ? '<div class="flex gap-1 mt-1.5 overflow-x-auto">' + thumbs.map(function(u) { return '<img src="' + esc(u) + '" alt="" class="w-12 h-12 rounded object-cover flex-shrink-0 border border-slate-200">'; }).join('') + '</div>' : '';
             var titleEsc = esc(p.title).replace(/'/g, "\\'");
-            return '<article class="group rounded-2xl border-2 border-navy-800/20 bg-white p-6 sm:p-8 shadow-md hover:shadow-xl hover:border-brand-300/50 transition-all duration-300 flex flex-col">' +
+            var firstImg = images[0] || '';
+            var galleryHtml = '<div class="relative rounded-xl bg-slate-100 overflow-hidden mb-6 aspect-[4/3] flex items-center justify-center">' +
+                (firstImg ? '<img src="' + esc(firstImg) + '" alt="" class="gallery-main w-full h-full object-contain">' : '<img src="" alt="" class="gallery-main hidden w-full h-full object-contain"><span class="text-slate-400 text-sm">Нет изображений</span>') +
+                (images.length > 1 ? '<button type="button" class="gallery-prev absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white shadow text-navy-900 flex items-center justify-center text-xl font-bold" onclick="event.stopPropagation(); galleryPrev(' + p.id + ')">‹</button><button type="button" class="gallery-next absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white shadow text-navy-900 flex items-center justify-center text-xl font-bold" onclick="event.stopPropagation(); galleryNext(' + p.id + ')">›</button>' : '') +
+                '</div>';
+            var modalContent = '<div class="flex min-h-full items-center justify-center p-4"><div class="fixed inset-0 bg-navy-900/70 backdrop-blur-sm" onclick="document.getElementById(\'modal-' + p.id + '\').classList.add(\'hidden\')"></div>' +
+                '<div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-8 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">' +
+                galleryHtml +
+                '<h3 class="font-display font-semibold text-xl text-navy-900">' + esc(p.title) + '</h3>' +
+                '<p class="mt-4 text-slate-600 leading-relaxed whitespace-pre-line">' + esc(desc) + '</p>' +
+                '<div class="mt-6 flex flex-wrap gap-3">' +
+                '<button type="button" onclick="document.getElementById(\'modal-' + p.id + '\').classList.add(\'hidden\')" class="rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2.5 transition">Закрыть</button>' +
+                '<button type="button" onclick="document.getElementById(\'modal-' + p.id + '\').classList.add(\'hidden\'); openOrderModal(\'' + titleEsc + '\')" class="rounded-xl bg-navy-800 hover:bg-navy-900 text-white font-medium px-4 py-2.5 transition">Заказать</button>' +
+                '</div></div></div>';
+            return '<article class="group rounded-2xl border-2 border-navy-800/20 bg-white p-6 sm:p-8 shadow-md hover:shadow-xl hover:border-brand-300/50 transition-all duration-300 flex flex-col cursor-pointer" data-product-id="' + p.id + '" onclick="if(!event.target.closest(\'button\')) openProductModal(' + p.id + ')">' +
                 '<div class="aspect-[4/3] rounded-xl bg-slate-100 overflow-hidden mb-4">' + mainBlock + '</div>' + thumbsHtml +
                 '<h3 class="font-display font-semibold text-xl text-navy-900 mt-4">' + esc(p.title) + '</h3>' +
                 '<p class="mt-2 text-slate-600 text-sm leading-relaxed line-clamp-3">' + esc(short) + '</p>' +
                 '<div class="mt-4 pt-4 border-t border-slate-200 flex-1 flex flex-wrap items-end gap-2">' +
-                '<button type="button" onclick="document.getElementById(\'modal-' + p.id + '\').classList.remove(\'hidden\')" class="text-brand-600 hover:text-brand-700 font-medium text-sm inline-flex items-center gap-1">Подробнее <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>' +
-                '<button type="button" onclick="openOrderModal(\'' + titleEsc + '\')" class="rounded-xl bg-navy-800 hover:bg-navy-900 text-white font-medium text-sm px-4 py-2.5 transition">Заказать</button>' +
+                '<button type="button" onclick="event.stopPropagation(); openProductModal(' + p.id + ')" class="text-brand-600 hover:text-brand-700 font-medium text-sm inline-flex items-center gap-1">Подробнее <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>' +
+                '<button type="button" onclick="event.stopPropagation(); openOrderModal(\'' + titleEsc + '\')" class="rounded-xl bg-navy-800 hover:bg-navy-900 text-white font-medium text-sm px-4 py-2.5 transition">Заказать</button>' +
                 '</div>' +
-                '<div id="modal-' + p.id + '" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-modal="true"><div class="flex min-h-full items-center justify-center p-4"><div class="fixed inset-0 bg-navy-900/70 backdrop-blur-sm" onclick="document.getElementById(\'modal-' + p.id + '\').classList.add(\'hidden\')"></div><div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-8 max-h-[85vh] overflow-y-auto"><h3 class="font-display font-semibold text-xl text-navy-900">' + esc(p.title) + '</h3><p class="mt-4 text-slate-600 leading-relaxed whitespace-pre-line">' + esc(desc) + '</p><button type="button" onclick="document.getElementById(\'modal-' + p.id + '\').classList.add(\'hidden\')" class="mt-6 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2.5 transition">Закрыть</button></div></div></div></article>';
+                '<div id="modal-' + p.id + '" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-modal="true">' + modalContent + '</div></article>';
         }).join('');
     }).catch(function() {
         document.getElementById('products-grid').innerHTML = '<p class="col-span-full text-center py-12 text-slate-500">Ошибка загрузки каталога.</p>';
