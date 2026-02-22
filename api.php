@@ -87,18 +87,58 @@ if ($path === 'products' && $method === 'GET') {
 
 // POST /leads — создать заявку (с лимитом по IP)
 if ($path === 'leads' && $method === 'POST') {
-    $phone = isset($body['phone']) ? trim((string)$body['phone']) : '';
+    $contentType = isset($_SERVER['CONTENT_TYPE']) ? (string)$_SERVER['CONTENT_TYPE'] : '';
+    $isMultipart = stripos($contentType, 'multipart/form-data') !== false;
+    $input = $isMultipart ? $_POST : $body;
+
+    $phone = isset($input['phone']) ? trim((string)$input['phone']) : '';
     if (strlen($phone) < 10 || strlen($phone) > 20) {
         http_response_code(400);
         echo json_encode(['detail' => 'Телефон должен быть от 10 до 20 символов']);
         exit;
     }
-    $name = isset($body['name']) ? trim(substr((string)$body['name'], 0, 255)) : null;
-    $comment = isset($body['comment']) ? trim(substr((string)$body['comment'], 0, 2000)) : null;
-    $st = $pdo->prepare("INSERT INTO leads (phone, name, comment) VALUES (?, ?, ?)");
-    $st->execute([$phone, $name ?: null, $comment ?: null]);
+    $name = isset($input['name']) ? trim(substr((string)$input['name'], 0, 255)) : null;
+    $comment = isset($input['comment']) ? trim(substr((string)$input['comment'], 0, 2000)) : null;
+
+    $attachmentName = null;
+    $attachmentUrl = null;
+    $attachmentSize = null;
+    if (!empty($_FILES['attachment']) && isset($_FILES['attachment']['error']) && $_FILES['attachment']['error'] !== UPLOAD_ERR_NO_FILE) {
+        if ($_FILES['attachment']['error'] !== UPLOAD_ERR_OK) {
+            http_response_code(400);
+            echo json_encode(['detail' => 'Не удалось загрузить файл']);
+            exit;
+        }
+        $maxBytes = 20 * 1024 * 1024;
+        $size = isset($_FILES['attachment']['size']) ? (int)$_FILES['attachment']['size'] : 0;
+        if ($size <= 0 || $size > $maxBytes) {
+            http_response_code(400);
+            echo json_encode(['detail' => 'Размер файла должен быть до 20 МБ']);
+            exit;
+        }
+        $original = isset($_FILES['attachment']['name']) ? (string)$_FILES['attachment']['name'] : 'file';
+        $original = trim($original);
+        $original = $original === '' ? 'file' : $original;
+        $safeOriginal = preg_replace('/[^A-Za-z0-9._-]/', '_', $original);
+        $safeOriginal = substr($safeOriginal ?: 'file', 0, 120);
+        $storedName = bin2hex(random_bytes(8)) . '_' . $safeOriginal;
+        $dir = __DIR__ . '/public/uploads/leads';
+        if (!is_dir($dir)) mkdir($dir, 0755, true);
+        $pathname = $dir . '/' . $storedName;
+        if (!move_uploaded_file($_FILES['attachment']['tmp_name'], $pathname)) {
+            http_response_code(500);
+            echo json_encode(['detail' => 'Ошибка сохранения файла']);
+            exit;
+        }
+        $attachmentName = substr($original, 0, 255);
+        $attachmentUrl = '/bots_site/public/uploads/leads/' . $storedName;
+        $attachmentSize = $size;
+    }
+
+    $st = $pdo->prepare("INSERT INTO leads (phone, name, comment, attachment_name, attachment_url, attachment_size) VALUES (?, ?, ?, ?, ?, ?)");
+    $st->execute([$phone, $name ?: null, $comment ?: null, $attachmentName, $attachmentUrl, $attachmentSize]);
     $id = (int)$pdo->lastInsertId();
-    $row = $pdo->query("SELECT id, phone, name, comment, created_at, status FROM leads WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
+    $row = $pdo->query("SELECT id, phone, name, comment, attachment_name, attachment_url, attachment_size, created_at, status FROM leads WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
     $row['created_at'] = $row['created_at'] ?? '';
     http_response_code(201);
     echo json_encode($row);
@@ -297,7 +337,7 @@ if ($path === 'admin/leads' && $method === 'GET') {
     $status = isset($_GET['status']) ? $_GET['status'] : '';
     $valid = ['new', 'contacted', 'closed'];
     $where = in_array($status, $valid) ? "WHERE status = " . $pdo->quote($status) : "";
-    $stmt = $pdo->query("SELECT id, phone, name, comment, created_at, status FROM leads $where ORDER BY created_at DESC LIMIT 200");
+    $stmt = $pdo->query("SELECT id, phone, name, comment, attachment_name, attachment_url, attachment_size, created_at, status FROM leads $where ORDER BY created_at DESC LIMIT 200");
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     foreach ($rows as &$r) { $r['created_at'] = $r['created_at'] ?? ''; }
     echo json_encode($rows);
@@ -310,7 +350,7 @@ if (preg_match('#^admin/leads/(\d+)$#', $path, $m) && $method === 'PATCH') {
     $id = (int)$m[1];
     $status = isset($body['status']) ? $body['status'] : '';
     if (!in_array($status, ['new', 'contacted', 'closed'])) {
-        $row = $pdo->query("SELECT id, phone, name, comment, created_at, status FROM leads WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
+        $row = $pdo->query("SELECT id, phone, name, comment, attachment_name, attachment_url, attachment_size, created_at, status FROM leads WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
         if (!$row) {
             http_response_code(404);
             echo json_encode(['detail' => 'Заявка не найдена']);
@@ -327,7 +367,7 @@ if (preg_match('#^admin/leads/(\d+)$#', $path, $m) && $method === 'PATCH') {
         echo json_encode(['detail' => 'Заявка не найдена']);
         exit;
     }
-    $row = $pdo->query("SELECT id, phone, name, comment, created_at, status FROM leads WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
+    $row = $pdo->query("SELECT id, phone, name, comment, attachment_name, attachment_url, attachment_size, created_at, status FROM leads WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
     $row['created_at'] = $row['created_at'] ?? '';
     echo json_encode($row);
     exit;

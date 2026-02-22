@@ -42,6 +42,9 @@ CREATE TABLE IF NOT EXISTS leads (
     phone VARCHAR(20) NOT NULL,
     name VARCHAR(255),
     comment TEXT,
+    attachment_name VARCHAR(255) NULL,
+    attachment_url VARCHAR(512) NULL,
+    attachment_size BIGINT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     status ENUM('new','contacted','closed') NOT NULL DEFAULT 'new'
 );
@@ -55,6 +58,19 @@ if (!$hasColumn) {
     } catch (PDOException $e) {
         // игнорируем, если колонка уже есть или нет прав
     }
+}
+// Миграция: вложения в заявках
+$hasLeadAttachmentName = $pdo->query("SHOW COLUMNS FROM leads LIKE 'attachment_name'")->fetch();
+if (!$hasLeadAttachmentName) {
+    try { $pdo->exec("ALTER TABLE leads ADD COLUMN attachment_name VARCHAR(255) NULL"); } catch (PDOException $e) {}
+}
+$hasLeadAttachmentUrl = $pdo->query("SHOW COLUMNS FROM leads LIKE 'attachment_url'")->fetch();
+if (!$hasLeadAttachmentUrl) {
+    try { $pdo->exec("ALTER TABLE leads ADD COLUMN attachment_url VARCHAR(512) NULL"); } catch (PDOException $e) {}
+}
+$hasLeadAttachmentSize = $pdo->query("SHOW COLUMNS FROM leads LIKE 'attachment_size'")->fetch();
+if (!$hasLeadAttachmentSize) {
+    try { $pdo->exec("ALTER TABLE leads ADD COLUMN attachment_size BIGINT NULL"); } catch (PDOException $e) {}
 }
 
 // Создать админа по умолчанию, если нет ни одного
