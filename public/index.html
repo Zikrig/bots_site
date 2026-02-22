@@ -26,10 +26,10 @@
 <body class="bg-surface text-slate-800 font-sans antialiased min-h-screen flex flex-col">
     <header class="border-b border-slate-200/80 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-            <a href="/" class="font-display font-semibold text-xl text-slate-900 tracking-tight">Боты</a>
+            <a href="/bots_site/public/" class="font-display font-semibold text-xl text-slate-900 tracking-tight">Боты</a>
             <nav class="flex items-center gap-6">
-                <a href="/#products" class="text-slate-600 hover:text-brand-600 transition">Каталог</a>
-                <a href="/#request" class="text-slate-600 hover:text-brand-600 transition">Оставить заявку</a>
+                <a href="/bots_site/public/#products" class="text-slate-600 hover:text-brand-600 transition">Каталог</a>
+                <a href="/bots_site/public/#request" class="text-slate-600 hover:text-brand-600 transition">Оставить заявку</a>
             </nav>
         </div>
     </header>
@@ -98,7 +98,8 @@
     </footer>
     <script>
 (function() {
-    var API = '/api/v1';
+    var BASE = '/bots_site/public';
+    var API = '/bots_site/api/v1';
     function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
     fetch(API + '/products').then(function(r) { return r.json(); }).then(function(products) {
         var grid = document.getElementById('products-grid');

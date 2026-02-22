@@ -28,7 +28,7 @@
                     <button type="submit" id="login-btn" class="w-full rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-medium py-3 transition disabled:opacity-50">Войти</button>
                 </form>
             </div>
-            <p class="text-center text-slate-500 text-sm mt-4"><a href="/" class="text-brand-600 hover:underline">На главную</a></p>
+            <p class="text-center text-slate-500 text-sm mt-4"><a href="/bots_site/public/" class="text-brand-600 hover:underline">На главную</a></p>
         </div>
     </div>
     <script>
@@ -38,10 +38,12 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     var btn = document.getElementById('login-btn');
     err.classList.add('hidden');
     btn.disabled = true;
-    fetch('/api/v1/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ username: document.getElementById('username').value, password: document.getElementById('password').value }) })
+    var BASE = '/bots_site/public';
+    var API = '/bots_site/api/v1';
+    fetch(API + '/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ username: document.getElementById('username').value, password: document.getElementById('password').value }) })
     .then(function(r) { return r.json().then(function(data) { return { ok: r.ok, data: data }; }); })
     .then(function(res) {
-        if (res.ok) window.location.href = '/admin/dashboard';
+        if (res.ok) window.location.href = BASE + '/admin/dashboard.html';
         else { err.textContent = res.data.detail || 'Неверный логин или пароль'; err.classList.remove('hidden'); }
     })
     .catch(function() { err.textContent = 'Ошибка сети'; err.classList.remove('hidden'); })

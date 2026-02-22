@@ -11,12 +11,12 @@
 <body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen">
     <div class="flex min-h-screen">
         <aside class="w-56 bg-slate-900 text-white flex-shrink-0">
-            <div class="p-4 border-b border-slate-700"><a href="/admin/dashboard" class="font-semibold text-lg">Админка</a></div>
+            <div class="p-4 border-b border-slate-700"><a href="/bots_site/public/admin/dashboard.html" class="font-semibold text-lg">Админка</a></div>
             <nav class="p-2">
-                <a href="/admin/dashboard" class="block rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white transition">Дашборд</a>
-                <a href="/admin/products" class="block rounded-lg px-3 py-2 bg-slate-800 text-white">Товары</a>
-                <a href="/admin/leads" class="block rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white transition">Заявки</a>
-                <a href="/" class="block rounded-lg px-3 py-2 text-slate-400 hover:bg-slate-800 hover:text-white transition mt-4">На сайт</a>
+                <a href="/bots_site/public/admin/dashboard.html" class="block rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white transition">Дашборд</a>
+                <a href="/bots_site/public/admin/products.html" class="block rounded-lg px-3 py-2 bg-slate-800 text-white">Товары</a>
+                <a href="/bots_site/public/admin/leads.html" class="block rounded-lg px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white transition">Заявки</a>
+                <a href="/bots_site/public/" class="block rounded-lg px-3 py-2 text-slate-400 hover:bg-slate-800 hover:text-white transition mt-4">На сайт</a>
                 <button type="button" onclick="logout()" class="block w-full text-left rounded-lg px-3 py-2 text-slate-400 hover:bg-slate-800 hover:text-white transition mt-4">Выйти</button>
             </nav>
         </aside>
@@ -49,12 +49,13 @@
         </div>
     </div>
     <script>
-var API = '/api/v1';
-function logout() { fetch(API + '/admin/logout', { method: 'POST', credentials: 'include' }).then(function() { window.location.href = '/admin/login'; }); }
-fetch(API + '/admin/me', { credentials: 'include' }).then(function(r) { if (r.status === 401) window.location.href = '/admin/login'; });
+var BASE = '/bots_site/public';
+var API = '/bots_site/api/v1';
+function logout() { fetch(API + '/admin/logout', { method: 'POST', credentials: 'include' }).then(function() { window.location.href = BASE + '/admin/login.html'; }); }
+fetch(API + '/admin/me', { credentials: 'include' }).then(function(r) { if (r.status === 401) window.location.href = BASE + '/admin/login.html'; });
 function escapeHtml(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 function loadProducts() {
-    fetch(API + '/admin/products', { credentials: 'include' }).then(function(r) { if (r.status === 401) { window.location.href = '/admin/login'; return []; } return r.json(); }).then(function(list) {
+    fetch(API + '/admin/products', { credentials: 'include' }).then(function(r) { if (r.status === 401) { window.location.href = BASE + '/admin/login.html'; return []; } return r.json(); }).then(function(list) {
         var el = document.getElementById('products-list');
         if (!list || list.length === 0) { el.innerHTML = '<p class="text-slate-500">Нет товаров. Добавьте первый.</p>'; return; }
         el.innerHTML = list.map(function(p) {
