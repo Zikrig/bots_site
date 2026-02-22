@@ -137,6 +137,7 @@
         document.getElementById('order-error').classList.add('hidden');
         document.getElementById('order-modal').classList.remove('hidden');
     }
+    window.openOrderModal = openOrderModal;
     window.productModalData = {};
     function openProductModal(id) {
         var d = window.productModalData[id];
@@ -166,6 +167,9 @@
         var el = document.getElementById('modal-' + id);
         if (el) { var m = el.querySelector('.gallery-main'); if (m) m.src = d.images[d.currentIndex]; }
     }
+    window.openProductModal = openProductModal;
+    window.galleryPrev = galleryPrev;
+    window.galleryNext = galleryNext;
     document.getElementById('order-modal-backdrop').addEventListener('click', function() { document.getElementById('order-modal').classList.add('hidden'); });
     document.getElementById('order-cancel').addEventListener('click', function() { document.getElementById('order-modal').classList.add('hidden'); });
     document.getElementById('order-form').addEventListener('submit', function(e) {
