@@ -13,6 +13,17 @@ session_start();
 
 require_once __DIR__ . '/php/db.php';
 
+// Любая ошибка MySQL вернётся в JSON (упростит поиск проблемы)
+set_exception_handler(function (Throwable $e) {
+    if ($e instanceof PDOException) {
+        header('Content-Type: application/json; charset=utf-8');
+        http_response_code(500);
+        echo json_encode(['detail' => 'Ошибка БД', 'error' => $e->getMessage()]);
+        exit;
+    }
+    throw $e;
+});
+
 $path = isset($_GET['path']) ? trim($_GET['path'], '/') : '';
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
