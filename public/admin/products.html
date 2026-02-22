@@ -41,7 +41,22 @@
                     <div><label for="product-slug" class="block text-sm font-medium text-slate-700 mb-1">Slug (опционально)</label><input type="text" id="product-slug" name="slug" maxlength="255" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none"></div>
                     <div><label for="product-short" class="block text-sm font-medium text-slate-700 mb-1">Краткое описание</label><input type="text" id="product-short" name="short_description" maxlength="500" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none"></div>
                     <div><label for="product-description" class="block text-sm font-medium text-slate-700 mb-1">Описание</label><textarea id="product-description" name="description" rows="4" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none resize-none"></textarea></div>
-                    <div><label for="product-image" class="block text-sm font-medium text-slate-700 mb-1">URL изображения</label><input type="url" id="product-image" name="image_url" maxlength="512" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none"></div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Главное изображение</label>
+                        <div class="flex gap-2">
+                            <input type="url" id="product-image" name="image_url" maxlength="512" placeholder="URL или загрузите файл" class="flex-1 rounded-xl border border-slate-300 px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
+                            <label class="rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2.5 cursor-pointer transition shrink-0">Загрузить<input type="file" id="product-image-upload" accept="image/*" class="hidden"></label>
+                        </div>
+                        <div id="product-image-preview" class="mt-2 w-24 h-24 rounded-lg bg-slate-100 overflow-hidden hidden"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Доп. изображения (галерея)</label>
+                        <div id="product-gallery-list" class="flex flex-wrap gap-2 mb-2"></div>
+                        <div class="flex gap-2 flex-wrap">
+                            <label class="rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium px-3 py-2 cursor-pointer transition">Загрузить в галерею<input type="file" id="product-gallery-upload" accept="image/*" class="hidden"></label>
+                            <button type="button" id="product-gallery-add-url" class="rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium px-3 py-2 transition">Добавить по URL</button>
+                        </div>
+                    </div>
                     <div class="flex items-center gap-2"><input type="checkbox" id="product-visible" name="is_visible" checked class="rounded border-slate-300 text-brand-600 focus:ring-brand-500"><label for="product-visible" class="text-sm text-slate-700">Показывать на сайте</label></div>
                     <div class="flex gap-3 pt-2"><button type="submit" id="product-submit" class="rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-medium px-4 py-2.5 transition">Сохранить</button><button type="button" onclick="closeProductModal()" class="rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2.5 transition">Отмена</button></div>
                 </form>
@@ -64,6 +79,20 @@ function loadProducts() {
         }).join('');
     }).catch(function() { document.getElementById('products-list').innerHTML = '<p class="text-red-600">Ошибка загрузки.</p>'; });
 }
+var galleryUrls = [];
+function renderGallery() {
+    var el = document.getElementById('product-gallery-list');
+    el.innerHTML = galleryUrls.map(function(url, i) {
+        return '<div class="relative group"><img src="' + escapeHtml(url) + '" alt="" class="w-16 h-16 rounded-lg object-cover border border-slate-200"><button type="button" onclick="galleryUrls.splice(' + i + ',1); renderGallery();" class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs leading-none opacity-0 group-hover:opacity-100 transition">×</button></div>';
+    }).join('');
+}
+function uploadFile(file, callback) {
+    var fd = new FormData();
+    fd.append('file', file);
+    fetch(apiUrl('admin/upload'), { method: 'POST', credentials: 'include', body: fd }).then(function(r) { return r.json(); }).then(function(data) {
+        if (data.url) callback(data.url); else alert(data.detail || 'Ошибка загрузки');
+    }).catch(function() { alert('Ошибка загрузки'); });
+}
 function openProductModal(product) {
     document.getElementById('product-modal-title').textContent = product ? 'Редактировать товар' : 'Новый товар';
     document.getElementById('product-id').value = product ? product.id : '';
@@ -72,16 +101,41 @@ function openProductModal(product) {
     document.getElementById('product-short').value = product ? (product.short_description || '') : '';
     document.getElementById('product-description').value = product ? (product.description || '') : '';
     document.getElementById('product-image').value = product ? (product.image_url || '') : '';
+    galleryUrls = (product && product.image_urls) ? product.image_urls.slice() : [];
+    renderGallery();
     document.getElementById('product-visible').checked = product ? product.is_visible : true;
+    var prev = document.getElementById('product-image-preview');
+    if (product && product.image_url) { prev.innerHTML = '<img src="' + escapeHtml(product.image_url) + '" alt="" class="w-full h-full object-cover">'; prev.classList.remove('hidden'); } else { prev.innerHTML = ''; prev.classList.add('hidden'); }
     document.getElementById('product-modal').classList.remove('hidden');
 }
 function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
 function editProduct(id) { fetch(apiUrl('admin/products/' + id), { credentials: 'include' }).then(function(r) { return r.json(); }).then(function(p) { openProductModal(p); }); }
 function deleteProduct(id, title) { if (!confirm('Удалить товар «' + title + '»?')) return; fetch(apiUrl('admin/products/' + id), { method: 'DELETE', credentials: 'include' }).then(function(r) { if (r.status === 204) loadProducts(); }); }
+document.getElementById('product-image-upload').addEventListener('change', function() {
+    var f = this.files[0];
+    if (!f) return;
+    uploadFile(f, function(url) { document.getElementById('product-image').value = url; document.getElementById('product-image-preview').innerHTML = '<img src="' + url + '" alt="" class="w-full h-full object-cover">'; document.getElementById('product-image-preview').classList.remove('hidden'); });
+    this.value = '';
+});
+document.getElementById('product-image').addEventListener('input', function() {
+    var v = this.value.trim();
+    var prev = document.getElementById('product-image-preview');
+    if (v) { prev.innerHTML = '<img src="' + escapeHtml(v) + '" alt="" class="w-full h-full object-cover">'; prev.classList.remove('hidden'); } else { prev.innerHTML = ''; prev.classList.add('hidden'); }
+});
+document.getElementById('product-gallery-upload').addEventListener('change', function() {
+    var f = this.files[0];
+    if (!f) return;
+    uploadFile(f, function(url) { galleryUrls.push(url); renderGallery(); });
+    this.value = '';
+});
+document.getElementById('product-gallery-add-url').addEventListener('click', function() {
+    var url = prompt('Введите URL изображения:');
+    if (url && url.trim()) { galleryUrls.push(url.trim()); renderGallery(); }
+});
 document.getElementById('product-form').addEventListener('submit', function(e) {
     e.preventDefault();
     var id = document.getElementById('product-id').value;
-    var payload = { title: document.getElementById('product-title').value.trim(), slug: document.getElementById('product-slug').value.trim() || null, short_description: document.getElementById('product-short').value.trim() || '', description: document.getElementById('product-description').value.trim() || '', image_url: document.getElementById('product-image').value.trim() || '', is_visible: document.getElementById('product-visible').checked };
+    var payload = { title: document.getElementById('product-title').value.trim(), slug: document.getElementById('product-slug').value.trim() || null, short_description: document.getElementById('product-short').value.trim() || '', description: document.getElementById('product-description').value.trim() || '', image_url: document.getElementById('product-image').value.trim() || '', image_urls: galleryUrls, is_visible: document.getElementById('product-visible').checked };
     var url = apiUrl('admin/products' + (id ? '/' + id : '')); var method = id ? 'PATCH' : 'POST';
     fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(payload) }).then(function(r) { if (r.ok) { closeProductModal(); loadProducts(); } else r.json().then(function(d) { alert(d.detail || 'Ошибка'); }); });
 });

@@ -11,7 +11,8 @@
                 extend: {
                     colors: {
                         brand: { 50: '#e6f4ff', 100: '#bae0ff', 200: '#7cc4fa', 300: '#47a3f3', 400: '#2186eb', 500: '#0967d2', 600: '#0552b5', 700: '#03449e', 800: '#01337d', 900: '#002159' },
-                        surface: { DEFAULT: '#f8fafc', dark: '#0f172a' }
+                        navy: { 800: '#0f2744', 900: '#0a1c33', 950: '#051220' },
+                        surface: { DEFAULT: '#f1f5f9', dark: '#0f172a' }
                     },
                     fontFamily: { sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'], display: ['Outfit', 'Plus Jakarta Sans', 'sans-serif'] }
                 }
@@ -24,31 +25,31 @@
     <style>html { scroll-behavior: smooth; } body { font-feature-settings: "ss01", "ss02"; }</style>
 </head>
 <body class="bg-surface text-slate-800 font-sans antialiased min-h-screen flex flex-col">
-    <header class="border-b border-slate-200/80 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+    <header class="border-b border-navy-900/50 bg-navy-900 sticky top-0 z-50 shadow-lg">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-            <a href="/bots_site/public/" class="font-display font-semibold text-xl text-slate-900 tracking-tight">Боты</a>
+            <a href="/bots_site/public/" class="font-display font-semibold text-xl text-white tracking-tight">Боты</a>
             <nav class="flex items-center gap-6">
-                <a href="/bots_site/public/#products" class="text-slate-600 hover:text-brand-600 transition">Каталог</a>
-                <a href="/bots_site/public/#request" class="text-slate-600 hover:text-brand-600 transition">Оставить заявку</a>
+                <a href="/bots_site/public/#products" class="text-brand-200 hover:text-white transition">Каталог</a>
+                <a href="/bots_site/public/#request" class="text-brand-200 hover:text-white transition">Оставить заявку</a>
             </nav>
         </div>
     </header>
     <main class="flex-1">
-        <section class="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-brand-50/30 py-20 sm:py-28">
+        <section class="relative overflow-hidden bg-gradient-to-br from-navy-900 via-navy-800 to-brand-900 py-20 sm:py-28 text-white">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 relative">
                 <div class="max-w-2xl">
-                    <h1 class="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-slate-900 tracking-tight leading-tight">Telegram-боты под ваш бизнес</h1>
-                    <p class="mt-6 text-lg sm:text-xl text-slate-600 leading-relaxed">Доставка, поддержка, бронирование, магазин — соберём бота под задачу. Оставьте заявку, перезвоним и обсудим проект.</p>
+                    <h1 class="font-display font-bold text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-tight">Telegram-боты под ваш бизнес</h1>
+                    <p class="mt-6 text-lg sm:text-xl text-brand-100 leading-relaxed">Доставка, поддержка, бронирование, магазин — соберём бота под задачу. Оставьте заявку, перезвоним и обсудим проект.</p>
                     <div class="mt-10">
-                        <a href="#request" class="inline-flex items-center gap-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 py-3.5 shadow-lg shadow-brand-500/25 transition">Оставить заявку <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg></a>
+                        <a href="#request" class="inline-flex items-center gap-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-white font-medium px-6 py-3.5 shadow-lg shadow-black/20 transition">Оставить заявку <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg></a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="products" class="py-16 sm:py-24 bg-white">
+        <section id="products" class="py-16 sm:py-24 bg-slate-50 border-t border-slate-200">
             <div class="max-w-6xl mx-auto px-4 sm:px-6">
-                <h2 class="font-display font-semibold text-3xl sm:text-4xl text-slate-900 mb-4">Каталог типов ботов</h2>
+                <h2 class="font-display font-semibold text-3xl sm:text-4xl text-navy-900 mb-4">Каталог типов ботов</h2>
                 <p class="text-slate-600 text-lg max-w-2xl mb-12">Выберите направление — мы доработаем под ваши процессы и запустим в Telegram.</p>
                 <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                     <p class="col-span-full text-slate-500">Загрузка…</p>
@@ -56,51 +57,114 @@
             </div>
         </section>
 
-        <section id="request" class="py-16 sm:py-24 bg-slate-50 border-t border-slate-200">
+        <section id="request" class="py-16 sm:py-24 bg-navy-900 text-white">
             <div class="max-w-6xl mx-auto px-4 sm:px-6">
                 <div class="max-w-xl mx-auto text-center">
-                    <h2 class="font-display font-semibold text-3xl sm:text-4xl text-slate-900 mb-4">Оставить заявку на обратный звонок</h2>
-                    <p class="text-slate-600 mb-10">Укажите телефон — мы перезвоним и обсудим задачу.</p>
-                    <div id="lead-form-container" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 text-left">
+                    <h2 class="font-display font-semibold text-3xl sm:text-4xl mb-4">Оставить заявку на обратный звонок</h2>
+                    <p class="text-brand-100 mb-10">Укажите телефон — мы перезвоним и обсудим задачу.</p>
+                    <div id="lead-form-container" class="bg-white/5 backdrop-blur rounded-2xl border border-white/10 shadow-xl p-6 sm:p-8 text-left">
                         <form id="lead-form" class="space-y-5">
                             <div>
-                                <label for="phone" class="block text-sm font-medium text-slate-700 mb-1.5">Телефон <span class="text-red-500">*</span></label>
-                                <input type="tel" id="phone" name="phone" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition" placeholder="+7 (999) 123-45-67" maxlength="20">
+                                <label for="phone" class="block text-sm font-medium text-brand-100 mb-1.5">Телефон <span class="text-red-400">*</span></label>
+                                <input type="tel" id="phone" name="phone" required class="w-full rounded-xl border border-white/20 bg-white/10 text-white placeholder-slate-400 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition" placeholder="+7 (999) 123-45-67" maxlength="20">
                             </div>
                             <div>
-                                <label for="name" class="block text-sm font-medium text-slate-700 mb-1.5">Имя</label>
-                                <input type="text" id="name" name="name" class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition" placeholder="Как к вам обращаться" maxlength="255">
+                                <label for="name" class="block text-sm font-medium text-brand-100 mb-1.5">Имя</label>
+                                <input type="text" id="name" name="name" class="w-full rounded-xl border border-white/20 bg-white/10 text-white placeholder-slate-400 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition" placeholder="Как к вам обращаться" maxlength="255">
                             </div>
                             <div>
-                                <label for="comment" class="block text-sm font-medium text-slate-700 mb-1.5">Комментарий</label>
-                                <textarea id="comment" name="comment" rows="3" class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition resize-none" placeholder="Кратко опишите задачу (необязательно)" maxlength="2000"></textarea>
+                                <label for="comment" class="block text-sm font-medium text-brand-100 mb-1.5">Комментарий</label>
+                                <textarea id="comment" name="comment" rows="3" class="w-full rounded-xl border border-white/20 bg-white/10 text-white placeholder-slate-400 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition resize-none" placeholder="Кратко опишите задачу (необязательно)" maxlength="2000"></textarea>
                             </div>
-                            <p id="lead-error" class="text-red-600 text-sm hidden"></p>
-                            <button type="submit" id="lead-submit" class="w-full rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-medium py-3.5 flex items-center justify-center gap-2 transition disabled:opacity-50">
+                            <p id="lead-error" class="text-red-300 text-sm hidden"></p>
+                            <button type="submit" id="lead-submit" class="w-full rounded-xl bg-brand-500 hover:bg-brand-400 text-white font-medium py-3.5 flex items-center justify-center gap-2 transition disabled:opacity-50">
                                 <span id="lead-spinner" class="hidden items-center gap-1"><svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Отправка…</span>
                                 <span id="lead-btn-text">Отправить заявку</span>
                             </button>
                         </form>
                     </div>
                     <template id="lead-success-tpl">
-                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 text-center">
-                            <div class="w-14 h-14 rounded-full bg-brand-100 flex items-center justify-center mx-auto mb-4"><svg class="w-7 h-7 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
-                            <h3 class="font-display font-semibold text-xl text-slate-900">Спасибо!</h3>
-                            <p class="mt-2 text-slate-600">Мы перезвоним в ближайшее время.</p>
+                        <div class="bg-white/10 rounded-2xl border border-white/20 p-6 sm:p-8 text-center text-white">
+                            <div class="w-14 h-14 rounded-full bg-brand-500/30 flex items-center justify-center mx-auto mb-4"><svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
+                            <h3 class="font-display font-semibold text-xl">Спасибо!</h3>
+                            <p class="mt-2 text-brand-100">Мы перезвоним в ближайшее время.</p>
                         </div>
                     </template>
                 </div>
             </div>
         </section>
     </main>
-    <footer class="border-t border-slate-200 bg-slate-50 py-8 mt-auto">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center text-slate-500 text-sm">© 2025 Telegram-боты под заказ. Все права защищены.</div>
+    <!-- Модальное окно заказа товара -->
+    <div id="order-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-modal="true">
+        <div class="flex min-h-full items-center justify-center p-4">
+            <div class="fixed inset-0 bg-navy-900/70 backdrop-blur-sm" id="order-modal-backdrop"></div>
+            <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8">
+                <h3 id="order-modal-title" class="font-display font-semibold text-xl text-navy-900 mb-4">Заказать</h3>
+                <div id="order-form-wrap">
+                    <form id="order-form" class="space-y-4">
+                        <div><label for="order-phone" class="block text-sm font-medium text-slate-700 mb-1">Телефон <span class="text-red-500">*</span></label><input type="tel" id="order-phone" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="+7 (999) 123-45-67" maxlength="20"></div>
+                        <div><label for="order-name" class="block text-sm font-medium text-slate-700 mb-1">Имя</label><input type="text" id="order-name" class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Как к вам обращаться" maxlength="255"></div>
+                        <div><label for="order-comment" class="block text-sm font-medium text-slate-700 mb-1">Комментарий</label><textarea id="order-comment" rows="2" class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none resize-none" maxlength="2000"></textarea></div>
+                        <p id="order-error" class="text-red-600 text-sm hidden"></p>
+                        <div class="flex gap-3"><button type="submit" id="order-submit" class="flex-1 rounded-xl bg-navy-800 hover:bg-navy-900 text-white font-medium py-3 transition">Отправить заявку</button><button type="button" id="order-cancel" class="rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-3 transition">Отмена</button></div>
+                    </form>
+                </div>
+                <div id="order-success" class="hidden text-center py-4"><div class="w-12 h-12 rounded-full bg-brand-100 flex items-center justify-center mx-auto mb-3"><svg class="w-6 h-6 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div><p class="font-semibold text-slate-900">Спасибо!</p><p class="text-sm text-slate-600 mt-1">Мы перезвоним в ближайшее время.</p></div>
+            </div>
+        </div>
+    </div>
+    <footer class="border-t border-navy-900/50 bg-navy-950 py-8 mt-auto text-brand-200">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center text-sm">© 2025 Telegram-боты под заказ. Все права защищены.</div>
     </footer>
     <script>
 (function() {
     var BASE = '/bots_site/public';
     function apiUrl(path) { return '/bots_site/api.php?path=' + encodeURIComponent(path); }
     function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    var allImages = function(p) {
+        var list = [];
+        if (p.image_url) list.push(p.image_url);
+        if (p.image_urls && p.image_urls.length) list = list.concat(p.image_urls);
+        return list;
+    };
+    function openOrderModal(productTitle) {
+        document.getElementById('order-modal-title').textContent = 'Заказать: ' + productTitle;
+        document.getElementById('order-phone').value = '';
+        document.getElementById('order-name').value = '';
+        document.getElementById('order-comment').value = 'Заказ: ' + productTitle;
+        document.getElementById('order-form-wrap').classList.remove('hidden');
+        document.getElementById('order-success').classList.add('hidden');
+        document.getElementById('order-error').classList.add('hidden');
+        document.getElementById('order-modal').classList.remove('hidden');
+    }
+    document.getElementById('order-modal-backdrop').addEventListener('click', function() { document.getElementById('order-modal').classList.add('hidden'); });
+    document.getElementById('order-cancel').addEventListener('click', function() { document.getElementById('order-modal').classList.add('hidden'); });
+    document.getElementById('order-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var errEl = document.getElementById('order-error');
+        var btn = document.getElementById('order-submit');
+        errEl.classList.add('hidden');
+        btn.disabled = true;
+        fetch(apiUrl('leads'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                phone: document.getElementById('order-phone').value.trim(),
+                name: document.getElementById('order-name').value.trim() || null,
+                comment: document.getElementById('order-comment').value.trim() || null
+            })
+        }).then(function(r) { return r.json().then(function(data) {
+            if (r.ok) {
+                document.getElementById('order-form-wrap').classList.add('hidden');
+                document.getElementById('order-success').classList.remove('hidden');
+                setTimeout(function() { document.getElementById('order-modal').classList.add('hidden'); }, 1800);
+            } else {
+                errEl.textContent = (data && data.detail) ? (typeof data.detail === 'string' ? data.detail : 'Ошибка') : 'Ошибка отправки';
+                errEl.classList.remove('hidden');
+            }
+        }); }).catch(function() { errEl.textContent = 'Ошибка сети'; errEl.classList.remove('hidden'); }).finally(function() { btn.disabled = false; });
+    });
+
     fetch(apiUrl('products')).then(function(r) { return r.json(); }).then(function(products) {
         var grid = document.getElementById('products-grid');
         if (!products || products.length === 0) {
@@ -110,12 +174,21 @@
         grid.innerHTML = products.map(function(p) {
             var short = p.short_description || (p.description || '').slice(0, 200);
             var desc = p.description || p.short_description || 'Нет описания.';
-            return '<article class="group rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm hover:shadow-xl hover:border-brand-200/60 transition-all duration-300 flex flex-col">' +
-                '<div class="aspect-[4/3] rounded-xl bg-slate-100 overflow-hidden mb-5">' + (p.image_url ? '<img src="' + esc(p.image_url) + '" alt="' + esc(p.title) + '" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">' : '<div class="w-full h-full flex items-center justify-center text-slate-400"><svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div>') + '</div>' +
-                '<h3 class="font-display font-semibold text-xl text-slate-900">' + esc(p.title) + '</h3>' +
+            var images = allImages(p);
+            var mainImg = images[0];
+            var thumbs = images.length > 1 ? images.slice(1, 6) : [];
+            var mainBlock = mainImg ? '<img src="' + esc(mainImg) + '" alt="' + esc(p.title) + '" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">' : '<div class="w-full h-full flex items-center justify-center text-slate-400"><svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div>';
+            var thumbsHtml = thumbs.length ? '<div class="flex gap-1 mt-1.5 overflow-x-auto">' + thumbs.map(function(u) { return '<img src="' + esc(u) + '" alt="" class="w-12 h-12 rounded object-cover flex-shrink-0 border border-slate-200">'; }).join('') + '</div>' : '';
+            var titleEsc = esc(p.title).replace(/'/g, "\\'");
+            return '<article class="group rounded-2xl border-2 border-navy-800/20 bg-white p-6 sm:p-8 shadow-md hover:shadow-xl hover:border-brand-300/50 transition-all duration-300 flex flex-col">' +
+                '<div class="aspect-[4/3] rounded-xl bg-slate-100 overflow-hidden mb-4">' + mainBlock + '</div>' + thumbsHtml +
+                '<h3 class="font-display font-semibold text-xl text-navy-900 mt-4">' + esc(p.title) + '</h3>' +
                 '<p class="mt-2 text-slate-600 text-sm leading-relaxed line-clamp-3">' + esc(short) + '</p>' +
-                '<div class="mt-4 pt-4 border-t border-slate-100 flex-1 flex items-end"><button type="button" onclick="document.getElementById(\'modal-' + p.id + '\').classList.remove(\'hidden\')" class="text-brand-600 hover:text-brand-700 font-medium text-sm inline-flex items-center gap-1">Подробнее <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button></div>' +
-                '<div id="modal-' + p.id + '" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-modal="true"><div class="flex min-h-full items-center justify-center p-4"><div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="document.getElementById(\'modal-' + p.id + '\').classList.add(\'hidden\')"></div><div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-8 max-h-[85vh] overflow-y-auto"><h3 class="font-display font-semibold text-xl text-slate-900">' + esc(p.title) + '</h3><p class="mt-4 text-slate-600 leading-relaxed whitespace-pre-line">' + esc(desc) + '</p><button type="button" onclick="document.getElementById(\'modal-' + p.id + '\').classList.add(\'hidden\')" class="mt-6 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2.5 transition">Закрыть</button></div></div></div></article>';
+                '<div class="mt-4 pt-4 border-t border-slate-200 flex-1 flex flex-wrap items-end gap-2">' +
+                '<button type="button" onclick="document.getElementById(\'modal-' + p.id + '\').classList.remove(\'hidden\')" class="text-brand-600 hover:text-brand-700 font-medium text-sm inline-flex items-center gap-1">Подробнее <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>' +
+                '<button type="button" onclick="openOrderModal(\'' + titleEsc + '\')" class="rounded-xl bg-navy-800 hover:bg-navy-900 text-white font-medium text-sm px-4 py-2.5 transition">Заказать</button>' +
+                '</div>' +
+                '<div id="modal-' + p.id + '" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-modal="true"><div class="flex min-h-full items-center justify-center p-4"><div class="fixed inset-0 bg-navy-900/70 backdrop-blur-sm" onclick="document.getElementById(\'modal-' + p.id + '\').classList.add(\'hidden\')"></div><div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-8 max-h-[85vh] overflow-y-auto"><h3 class="font-display font-semibold text-xl text-navy-900">' + esc(p.title) + '</h3><p class="mt-4 text-slate-600 leading-relaxed whitespace-pre-line">' + esc(desc) + '</p><button type="button" onclick="document.getElementById(\'modal-' + p.id + '\').classList.add(\'hidden\')" class="mt-6 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2.5 transition">Закрыть</button></div></div></div></article>';
         }).join('');
     }).catch(function() {
         document.getElementById('products-grid').innerHTML = '<p class="col-span-full text-center py-12 text-slate-500">Ошибка загрузки каталога.</p>';

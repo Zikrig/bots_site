@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS products (
     description TEXT NOT NULL DEFAULT '',
     short_description VARCHAR(500) NOT NULL DEFAULT '',
     image_url VARCHAR(512) NOT NULL DEFAULT '',
+    image_urls TEXT NOT NULL DEFAULT '[]',
     sort_order INT NOT NULL DEFAULT 0,
     is_visible TINYINT(1) NOT NULL DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -45,6 +46,11 @@ CREATE TABLE IF NOT EXISTS leads (
     status ENUM('new','contacted','closed') NOT NULL DEFAULT 'new'
 );
 ");
+// Миграция: колонка image_urls для галереи (если таблица уже была создана раньше)
+$hasColumn = $pdo->query("SHOW COLUMNS FROM products LIKE 'image_urls'")->fetch();
+if (!$hasColumn) {
+    $pdo->exec("ALTER TABLE products ADD COLUMN image_urls TEXT NOT NULL DEFAULT '[]'");
+}
 
 // Создать админа по умолчанию, если нет ни одного
 $stmt = $pdo->query("SELECT COUNT(*) FROM admins");

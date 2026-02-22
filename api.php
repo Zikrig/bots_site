@@ -26,13 +26,49 @@ $body = json_decode(file_get_contents('php://input'), true) ?: [];
 
 // ---------- Роутинг ----------
 
+// POST /admin/upload — загрузка изображения (multipart)
+if ($path === 'admin/upload' && $method === 'POST') {
+    if (empty($_SESSION['admin_id'])) {
+        http_response_code(401);
+        echo json_encode(['detail' => 'Требуется авторизация']);
+        exit;
+    }
+    if (empty($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+        http_response_code(400);
+        echo json_encode(['detail' => 'Файл не загружен']);
+        exit;
+    }
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($_FILES['file']['tmp_name']);
+    $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!in_array($mime, $allowed)) {
+        http_response_code(400);
+        echo json_encode(['detail' => 'Допустимы только изображения: JPEG, PNG, GIF, WebP']);
+        exit;
+    }
+    $ext = preg_match('/^image\/(jpeg|png|gif|webp)$/', $mime, $m) ? $m[1] : 'jpg';
+    if ($ext === 'jpeg') $ext = 'jpg';
+    $dir = __DIR__ . '/public/uploads/products';
+    if (!is_dir($dir)) mkdir($dir, 0755, true);
+    $name = bin2hex(random_bytes(8)) . '.' . $ext;
+    $pathname = $dir . '/' . $name;
+    if (!move_uploaded_file($_FILES['file']['tmp_name'], $pathname)) {
+        http_response_code(500);
+        echo json_encode(['detail' => 'Ошибка сохранения файла']);
+        exit;
+    }
+    echo json_encode(['url' => '/bots_site/public/uploads/products/' . $name]);
+    exit;
+}
+
 // GET /products — публичный список товаров
 if ($path === 'products' && $method === 'GET') {
-    $stmt = $pdo->query("SELECT id, title, slug, description, short_description, image_url, sort_order, is_visible, created_at, updated_at FROM products WHERE is_visible = 1 ORDER BY sort_order, id");
+    $stmt = $pdo->query("SELECT id, title, slug, description, short_description, image_url, image_urls, sort_order, is_visible, created_at, updated_at FROM products WHERE is_visible = 1 ORDER BY sort_order, id");
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     foreach ($rows as &$r) {
         $r['created_at'] = $r['created_at'] ?? '';
         $r['updated_at'] = $r['updated_at'] ?? '';
+        $r['image_urls'] = json_decode($r['image_urls'] ?? '[]', true) ?: [];
     }
     echo json_encode($rows);
     exit;
@@ -117,11 +153,12 @@ if ($path === 'admin/me' && $method === 'GET') {
 // GET /admin/products — список всех
 if ($path === 'admin/products' && $method === 'GET') {
     requireAdmin();
-    $stmt = $pdo->query("SELECT id, title, slug, description, short_description, image_url, sort_order, is_visible, created_at, updated_at FROM products ORDER BY sort_order, id");
+    $stmt = $pdo->query("SELECT id, title, slug, description, short_description, image_url, image_urls, sort_order, is_visible, created_at, updated_at FROM products ORDER BY sort_order, id");
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     foreach ($rows as &$r) {
         $r['created_at'] = $r['created_at'] ?? '';
         $r['updated_at'] = $r['updated_at'] ?? '';
+        $r['image_urls'] = json_decode($r['image_urls'] ?? '[]', true) ?: [];
     }
     echo json_encode($rows);
     exit;
@@ -141,13 +178,15 @@ if ($path === 'admin/products' && $method === 'POST') {
     $description = isset($body['description']) ? (string)$body['description'] : '';
     $short_description = isset($body['short_description']) ? substr((string)$body['short_description'], 0, 500) : '';
     $image_url = isset($body['image_url']) ? substr((string)$body['image_url'], 0, 512) : '';
+    $image_urls = isset($body['image_urls']) && is_array($body['image_urls']) ? json_encode(array_slice(array_map(function ($u) { return substr((string)$u, 0, 512); }, $body['image_urls']), 0, 20)) : '[]';
     $sort_order = isset($body['sort_order']) ? (int)$body['sort_order'] : 0;
     $is_visible = isset($body['is_visible']) ? (bool)$body['is_visible'] : true;
-    $st = $pdo->prepare("INSERT INTO products (title, slug, description, short_description, image_url, sort_order, is_visible) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $st->execute([$title, $slug, $description, $short_description, $image_url, $sort_order, $is_visible ? 1 : 0]);
+    $st = $pdo->prepare("INSERT INTO products (title, slug, description, short_description, image_url, image_urls, sort_order, is_visible) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $st->execute([$title, $slug, $description, $short_description, $image_url, $image_urls, $sort_order, $is_visible ? 1 : 0]);
     $id = (int)$pdo->lastInsertId();
-    $row = $pdo->query("SELECT id, title, slug, description, short_description, image_url, sort_order, is_visible, created_at, updated_at FROM products WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
+    $row = $pdo->query("SELECT id, title, slug, description, short_description, image_url, image_urls, sort_order, is_visible, created_at, updated_at FROM products WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
     foreach (['created_at', 'updated_at'] as $k) { $row[$k] = $row[$k] ?? ''; }
+    $row['image_urls'] = json_decode($row['image_urls'] ?? '[]', true) ?: [];
     http_response_code(201);
     echo json_encode($row);
     exit;
@@ -157,7 +196,7 @@ if ($path === 'admin/products' && $method === 'POST') {
 if (preg_match('#^admin/products/(\d+)$#', $path, $m) && $method === 'GET') {
     requireAdmin();
     $id = (int)$m[1];
-    $stmt = $pdo->prepare("SELECT id, title, slug, description, short_description, image_url, sort_order, is_visible, created_at, updated_at FROM products WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT id, title, slug, description, short_description, image_url, image_urls, sort_order, is_visible, created_at, updated_at FROM products WHERE id = ?");
     $stmt->execute([$id]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     if (!$row) {
@@ -167,6 +206,7 @@ if (preg_match('#^admin/products/(\d+)$#', $path, $m) && $method === 'GET') {
     }
     $row['created_at'] = $row['created_at'] ?? '';
     $row['updated_at'] = $row['updated_at'] ?? '';
+    $row['image_urls'] = json_decode($row['image_urls'] ?? '[]', true) ?: [];
     echo json_encode($row);
     exit;
 }
@@ -184,7 +224,7 @@ if (preg_match('#^admin/products/(\d+)$#', $path, $m) && $method === 'PATCH') {
     }
     $updates = [];
     $params = [];
-    $fields = ['title' => 's', 'slug' => 's', 'description' => 's', 'short_description' => 's', 'image_url' => 's', 'sort_order' => 'i', 'is_visible' => 'b'];
+    $fields = ['title' => 's', 'slug' => 's', 'description' => 's', 'short_description' => 's', 'image_url' => 's', 'image_urls' => 'j', 'sort_order' => 'i', 'is_visible' => 'b'];
     foreach ($fields as $key => $type) {
         if (!array_key_exists($key, $body)) continue;
         if ($key === 'slug') {
@@ -198,6 +238,10 @@ if (preg_match('#^admin/products/(\d+)$#', $path, $m) && $method === 'PATCH') {
         } elseif ($key === 'image_url') {
             $updates[] = "image_url = ?";
             $params[] = substr((string)$body[$key], 0, 512);
+        } elseif ($key === 'image_urls') {
+            $urls = is_array($body[$key]) ? $body[$key] : [];
+            $updates[] = "image_urls = ?";
+            $params[] = json_encode(array_slice(array_map(function ($u) { return substr((string)$u, 0, 512); }, $urls), 0, 20));
         } elseif ($key === 'is_visible') {
             $updates[] = "is_visible = ?";
             $params[] = (bool)$body[$key] ? 1 : 0;
@@ -213,9 +257,10 @@ if (preg_match('#^admin/products/(\d+)$#', $path, $m) && $method === 'PATCH') {
         $params[] = $id;
         $pdo->prepare("UPDATE products SET " . implode(', ', $updates) . " WHERE id = ?")->execute($params);
     }
-    $row = $pdo->query("SELECT id, title, slug, description, short_description, image_url, sort_order, is_visible, created_at, updated_at FROM products WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
+    $row = $pdo->query("SELECT id, title, slug, description, short_description, image_url, image_urls, sort_order, is_visible, created_at, updated_at FROM products WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
     $row['created_at'] = $row['created_at'] ?? '';
     $row['updated_at'] = $row['updated_at'] ?? '';
+    $row['image_urls'] = json_decode($row['image_urls'] ?? '[]', true) ?: [];
     echo json_encode($row);
     exit;
 }
