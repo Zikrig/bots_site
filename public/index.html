@@ -127,10 +127,8 @@
     function apiUrl(path) { return '/bots_site/api.php?path=' + encodeURIComponent(path); }
     function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
     var allImages = function(p) {
-        var list = [];
-        if (p.image_url) list.push(p.image_url);
-        if (p.image_urls && p.image_urls.length) list = list.concat(p.image_urls);
-        return list;
+        if (p.image_urls && p.image_urls.length) return p.image_urls.slice();
+        return p.image_url ? [p.image_url] : [];
     };
     function openOrderModal(productTitle) {
         document.getElementById('order-modal-title').textContent = 'Заказать: ' + productTitle;
