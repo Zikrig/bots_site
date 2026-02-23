@@ -130,6 +130,12 @@
         if (p.image_urls && p.image_urls.length) return p.image_urls.slice();
         return p.image_url ? [p.image_url] : [];
     };
+    function formatPrice(price) {
+        if (price === null || price === '' || typeof price === 'undefined') return '';
+        var n = Number(price);
+        if (isNaN(n)) return '';
+        return n.toLocaleString('ru-RU') + ' ₽';
+    }
     function openOrderModal(productTitle) {
         document.getElementById('order-modal-title').textContent = 'Заказать: ' + productTitle;
         document.getElementById('order-phone').value = '';
@@ -214,6 +220,7 @@
             var desc = p.description || p.short_description || 'Нет описания.';
             var images = allImages(p);
             window.productModalData[p.id] = { images: images, title: p.title, desc: desc };
+            var priceText = formatPrice(p.price);
             var mainImg = images[0];
             var thumbs = images.length > 1 ? images.slice(1, 6) : [];
             var mainBlock = mainImg ? '<img src="' + esc(mainImg) + '" alt="' + esc(p.title) + '" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">' : '<div class="w-full h-full flex items-center justify-center text-slate-400"><svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div>';
@@ -238,6 +245,7 @@
                 '<h3 class="font-display font-semibold text-xl text-navy-900 mt-4">' + esc(p.title) + '</h3>' +
                 '<p class="mt-2 text-slate-600 text-sm leading-relaxed line-clamp-3">' + esc(short) + '</p>' +
                 '<div class="mt-4 pt-4 border-t border-slate-200 flex-1 flex flex-wrap items-end gap-2">' +
+                (priceText ? '<span class="mr-auto text-lg font-semibold text-navy-900">' + esc(priceText) + '</span>' : '<span class="mr-auto"></span>') +
                 '<button type="button" onclick="event.stopPropagation(); openProductModal(' + p.id + ')" class="text-brand-600 hover:text-brand-700 font-medium text-sm inline-flex items-center gap-1">Подробнее <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>' +
                 '<button type="button" onclick="event.stopPropagation(); openOrderModal(\'' + titleEsc + '\')" class="rounded-xl bg-navy-800 hover:bg-navy-900 text-white font-medium text-sm px-4 py-2.5 transition">Заказать</button>' +
                 '</div>' +
