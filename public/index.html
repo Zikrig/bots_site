@@ -136,6 +136,8 @@
     <footer class="border-t border-navy-900/50 bg-navy-950 py-8 mt-auto text-brand-200">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center text-sm">© 2025 Telegram-боты под заказ. Все права защищены.</div>
     </footer>
+    <noscript><div><img src="https://mc.yandex.ru/watch/106972892" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <script src="/bots_site/public/js/metrika.js"></script>
     <script>
 (function() {
     var BASE = '/bots_site/public';
@@ -246,6 +248,7 @@
             body: fd
         }).then(function(r) { return r.json().then(function(data) {
             if (r.ok) {
+                runYandexMetrikaCounter();
                 document.getElementById('order-form-wrap').classList.add('hidden');
                 document.getElementById('order-success').classList.remove('hidden');
                 document.getElementById('order-attachment').value = '';
@@ -328,6 +331,7 @@
         }).then(function(r) {
             return r.json().then(function(data) {
                 if (r.ok) {
+                    runYandexMetrikaCounter();
                     var tpl = document.getElementById('lead-success-tpl');
                     container.innerHTML = '';
                     container.appendChild(tpl.content.cloneNode(true));
