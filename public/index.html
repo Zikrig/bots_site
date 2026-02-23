@@ -39,7 +39,7 @@
             <div class="max-w-6xl mx-auto px-4 sm:px-6 relative">
                 <div class="max-w-2xl">
                     <h1 class="font-display font-bold text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-tight">Telegram-боты под ваш бизнес</h1>
-                    <p class="mt-6 text-lg sm:text-xl text-brand-100 leading-relaxed">Доставка, поддержка, бронирование, магазин — соберём бота под задачу. Оставьте заявку, перезвоним и обсудим проект.</p>
+                    <p class="mt-6 text-lg sm:text-xl text-brand-100 leading-relaxed">Доставка, поддержка, бронирование, магазин — соберём бота под задачу. Оставьте заявку, и мы свяжемся удобным способом.</p>
                     <div class="mt-10">
                         <a href="#request" class="inline-flex items-center gap-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-white font-medium px-6 py-3.5 shadow-lg shadow-black/20 transition">Оставить заявку <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg></a>
                     </div>
@@ -61,12 +61,12 @@
             <div class="max-w-6xl mx-auto px-4 sm:px-6">
                 <div class="max-w-xl mx-auto text-center">
                     <h2 class="font-display font-semibold text-3xl sm:text-4xl mb-4">Оставить заявку на обратный звонок</h2>
-                    <p class="text-brand-100 mb-10">Укажите телефон — мы перезвоним и обсудим задачу.</p>
+                    <p class="text-brand-100 mb-10">Оставьте контакт (телефон, Telegram или email) — и мы свяжемся с вами.</p>
                     <div id="lead-form-container" class="bg-white/5 backdrop-blur rounded-2xl border border-white/10 shadow-xl p-6 sm:p-8 text-left">
                         <form id="lead-form" class="space-y-5">
                             <div>
-                                <label for="phone" class="block text-sm font-medium text-brand-100 mb-1.5">Телефон <span class="text-red-400">*</span></label>
-                                <input type="tel" id="phone" name="phone" required class="w-full rounded-xl border border-white/20 bg-white/10 text-white placeholder-slate-400 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition" placeholder="+7 (999) 123-45-67" maxlength="20">
+                                <label for="contact" class="block text-sm font-medium text-brand-100 mb-1.5">Контакт <span class="text-red-400">*</span></label>
+                                <input type="text" id="contact" name="contact" required class="w-full rounded-xl border border-white/20 bg-white/10 text-white placeholder-slate-400 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition" placeholder="+7..., @telegram или email@example.com" maxlength="100">
                             </div>
                             <div>
                                 <label for="name" class="block text-sm font-medium text-brand-100 mb-1.5">Имя</label>
@@ -76,9 +76,16 @@
                                 <label for="comment" class="block text-sm font-medium text-brand-100 mb-1.5">Комментарий</label>
                                 <textarea id="comment" name="comment" rows="3" class="w-full rounded-xl border border-white/20 bg-white/10 text-white placeholder-slate-400 px-4 py-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition resize-none" placeholder="Кратко опишите задачу (необязательно)" maxlength="2000"></textarea>
                             </div>
-                            <div>
-                                <label for="lead-attachment" class="block text-sm font-medium text-brand-100 mb-1.5">Документ (до 20 МБ)</label>
-                                <input type="file" id="lead-attachment" name="attachment" class="w-full rounded-xl border border-white/20 bg-white/10 text-white file:mr-4 file:rounded-lg file:border-0 file:bg-brand-500 file:px-3 file:py-2 file:text-white hover:file:bg-brand-400">
+                            <div class="relative">
+                                <button type="button" id="lead-attach-toggle" class="inline-flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-2 text-sm text-brand-100 transition">
+                                    📎 Прикрепить документ
+                                </button>
+                                <div id="lead-attach-panel" class="hidden absolute z-20 mt-2 w-full rounded-xl border border-white/20 bg-navy-900 shadow-lg p-3">
+                                    <label for="lead-attachment" class="block text-xs text-brand-100 mb-1">Документ до 20 МБ</label>
+                                    <input type="file" id="lead-attachment" name="attachment" class="w-full text-sm text-white file:mr-3 file:rounded-md file:border-0 file:bg-brand-500 file:px-3 file:py-1.5 file:text-white">
+                                    <p id="lead-attachment-name" class="mt-2 text-xs text-brand-100"></p>
+                                    <button type="button" id="lead-attachment-clear" class="mt-2 text-xs text-brand-200 hover:text-white underline">Удалить файл</button>
+                                </div>
                             </div>
                             <p id="lead-error" class="text-red-300 text-sm hidden"></p>
                             <button type="submit" id="lead-submit" class="w-full rounded-xl bg-brand-500 hover:bg-brand-400 text-white font-medium py-3.5 flex items-center justify-center gap-2 transition disabled:opacity-50">
@@ -91,7 +98,7 @@
                         <div class="bg-white/10 rounded-2xl border border-white/20 p-6 sm:p-8 text-center text-white">
                             <div class="w-14 h-14 rounded-full bg-brand-500/30 flex items-center justify-center mx-auto mb-4"><svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
                             <h3 class="font-display font-semibold text-xl">Спасибо!</h3>
-                            <p class="mt-2 text-brand-100">Мы перезвоним в ближайшее время.</p>
+                            <p class="mt-2 text-brand-100">Мы свяжемся с вами в ближайшее время.</p>
                         </div>
                     </template>
                 </div>
@@ -106,15 +113,23 @@
                 <h3 id="order-modal-title" class="font-display font-semibold text-xl text-navy-900 mb-4">Заказать</h3>
                 <div id="order-form-wrap">
                     <form id="order-form" class="space-y-4">
-                        <div><label for="order-phone" class="block text-sm font-medium text-slate-700 mb-1">Телефон <span class="text-red-500">*</span></label><input type="tel" id="order-phone" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="+7 (999) 123-45-67" maxlength="20"></div>
+                        <div><label for="order-contact" class="block text-sm font-medium text-slate-700 mb-1">Контакт <span class="text-red-500">*</span></label><input type="text" id="order-contact" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="+7..., @telegram или email@example.com" maxlength="100"></div>
                         <div><label for="order-name" class="block text-sm font-medium text-slate-700 mb-1">Имя</label><input type="text" id="order-name" class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Как к вам обращаться" maxlength="255"></div>
                         <div><label for="order-comment" class="block text-sm font-medium text-slate-700 mb-1">Комментарий</label><textarea id="order-comment" rows="2" class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none resize-none" maxlength="2000"></textarea></div>
-                        <div><label for="order-attachment" class="block text-sm font-medium text-slate-700 mb-1">Документ (до 20 МБ)</label><input type="file" id="order-attachment" class="w-full rounded-xl border border-slate-300 px-3 py-2 file:mr-4 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:py-2"></div>
+                        <div class="relative">
+                            <button type="button" id="order-attach-toggle" class="inline-flex items-center gap-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 px-3 py-2 text-sm text-slate-700 transition">📎 Прикрепить документ</button>
+                            <div id="order-attach-panel" class="hidden mt-2 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                                <label for="order-attachment" class="block text-xs text-slate-600 mb-1">Документ до 20 МБ</label>
+                                <input type="file" id="order-attachment" class="w-full rounded-xl border border-slate-300 px-3 py-2 file:mr-3 file:rounded-md file:border-0 file:bg-slate-200 file:px-3 file:py-1.5">
+                                <p id="order-attachment-name" class="mt-2 text-xs text-slate-600"></p>
+                                <button type="button" id="order-attachment-clear" class="mt-2 text-xs text-slate-600 hover:text-slate-900 underline">Удалить файл</button>
+                            </div>
+                        </div>
                         <p id="order-error" class="text-red-600 text-sm hidden"></p>
                         <div class="flex gap-3"><button type="submit" id="order-submit" class="flex-1 rounded-xl bg-navy-800 hover:bg-navy-900 text-white font-medium py-3 transition">Отправить заявку</button><button type="button" id="order-cancel" class="rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-3 transition">Отмена</button></div>
                     </form>
                 </div>
-                <div id="order-success" class="hidden text-center py-4"><div class="w-12 h-12 rounded-full bg-brand-100 flex items-center justify-center mx-auto mb-3"><svg class="w-6 h-6 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div><p class="font-semibold text-slate-900">Спасибо!</p><p class="text-sm text-slate-600 mt-1">Мы перезвоним в ближайшее время.</p></div>
+                <div id="order-success" class="hidden text-center py-4"><div class="w-12 h-12 rounded-full bg-brand-100 flex items-center justify-center mx-auto mb-3"><svg class="w-6 h-6 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div><p class="font-semibold text-slate-900">Спасибо!</p><p class="text-sm text-slate-600 mt-1">Мы свяжемся с вами в ближайшее время.</p></div>
             </div>
         </div>
     </div>
@@ -138,9 +153,13 @@
     }
     function openOrderModal(productTitle) {
         document.getElementById('order-modal-title').textContent = 'Заказать: ' + productTitle;
-        document.getElementById('order-phone').value = '';
+        document.getElementById('order-contact').value = '';
         document.getElementById('order-name').value = '';
         document.getElementById('order-comment').value = 'Заказ: ' + productTitle;
+        var orderAttachment = document.getElementById('order-attachment');
+        var orderAttachmentName = document.getElementById('order-attachment-name');
+        if (orderAttachment) orderAttachment.value = '';
+        if (orderAttachmentName) orderAttachmentName.textContent = '';
         document.getElementById('order-form-wrap').classList.remove('hidden');
         document.getElementById('order-success').classList.add('hidden');
         document.getElementById('order-error').classList.add('hidden');
@@ -179,6 +198,35 @@
     window.openProductModal = openProductModal;
     window.galleryPrev = galleryPrev;
     window.galleryNext = galleryNext;
+    function setupAttachmentPopup(toggleId, panelId, inputId, nameId, clearId) {
+        var toggle = document.getElementById(toggleId);
+        var panel = document.getElementById(panelId);
+        var input = document.getElementById(inputId);
+        var name = document.getElementById(nameId);
+        var clear = document.getElementById(clearId);
+        if (!toggle || !panel || !input) return;
+        toggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            panel.classList.toggle('hidden');
+        });
+        panel.addEventListener('click', function(e) { e.stopPropagation(); });
+        input.addEventListener('change', function() {
+            var f = input.files && input.files[0];
+            if (name) name.textContent = f ? ('Выбран файл: ' + f.name) : '';
+        });
+        if (clear) clear.addEventListener('click', function() {
+            input.value = '';
+            if (name) name.textContent = '';
+        });
+    }
+    setupAttachmentPopup('lead-attach-toggle', 'lead-attach-panel', 'lead-attachment', 'lead-attachment-name', 'lead-attachment-clear');
+    setupAttachmentPopup('order-attach-toggle', 'order-attach-panel', 'order-attachment', 'order-attachment-name', 'order-attachment-clear');
+    document.addEventListener('click', function() {
+        var leadPanel = document.getElementById('lead-attach-panel');
+        var orderPanel = document.getElementById('order-attach-panel');
+        if (leadPanel) leadPanel.classList.add('hidden');
+        if (orderPanel) orderPanel.classList.add('hidden');
+    });
     document.getElementById('order-modal-backdrop').addEventListener('click', function() { document.getElementById('order-modal').classList.add('hidden'); });
     document.getElementById('order-cancel').addEventListener('click', function() { document.getElementById('order-modal').classList.add('hidden'); });
     document.getElementById('order-form').addEventListener('submit', function(e) {
@@ -188,7 +236,7 @@
         errEl.classList.add('hidden');
         btn.disabled = true;
         var fd = new FormData();
-        fd.append('phone', document.getElementById('order-phone').value.trim());
+        fd.append('contact', document.getElementById('order-contact').value.trim());
         fd.append('name', document.getElementById('order-name').value.trim() || '');
         fd.append('comment', document.getElementById('order-comment').value.trim() || '');
         var orderFile = document.getElementById('order-attachment').files[0];
@@ -269,7 +317,7 @@
         spinner.classList.add('flex');
         btnText.classList.add('hidden');
         var fd = new FormData();
-        fd.append('phone', document.getElementById('phone').value.trim());
+        fd.append('contact', document.getElementById('contact').value.trim());
         fd.append('name', document.getElementById('name').value.trim() || '');
         fd.append('comment', document.getElementById('comment').value.trim() || '');
         var leadFile = document.getElementById('lead-attachment').files[0];

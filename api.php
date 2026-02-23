@@ -94,10 +94,10 @@ if ($path === 'leads' && $method === 'POST') {
     $isMultipart = stripos($contentType, 'multipart/form-data') !== false;
     $input = $isMultipart ? $_POST : $body;
 
-    $phone = isset($input['phone']) ? trim((string)$input['phone']) : '';
-    if (strlen($phone) < 10 || strlen($phone) > 20) {
+    $contact = isset($input['contact']) ? trim((string)$input['contact']) : (isset($input['phone']) ? trim((string)$input['phone']) : '');
+    if (strlen($contact) < 3 || strlen($contact) > 100) {
         http_response_code(400);
-        echo json_encode(['detail' => 'Телефон должен быть от 10 до 20 символов']);
+        echo json_encode(['detail' => 'Контакт должен быть от 3 до 100 символов']);
         exit;
     }
     $name = isset($input['name']) ? trim(substr((string)$input['name'], 0, 255)) : null;
@@ -139,7 +139,7 @@ if ($path === 'leads' && $method === 'POST') {
     }
 
     $st = $pdo->prepare("INSERT INTO leads (phone, name, comment, attachment_name, attachment_url, attachment_size, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-    $st->execute([$phone, $name ?: null, $comment ?: null, $attachmentName, $attachmentUrl, $attachmentSize]);
+    $st->execute([$contact, $name ?: null, $comment ?: null, $attachmentName, $attachmentUrl, $attachmentSize]);
     $id = (int)$pdo->lastInsertId();
     $row = $pdo->query("SELECT id, phone, name, comment, attachment_name, attachment_url, attachment_size, created_at, status FROM leads WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
     $row['created_at'] = $row['created_at'] ?? '';
