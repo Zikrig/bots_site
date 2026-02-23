@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS products (
     slug VARCHAR(255) UNIQUE,
     description TEXT NOT NULL DEFAULT '',
     short_description VARCHAR(500) NOT NULL DEFAULT '',
+    price DECIMAL(12,2) NULL,
     image_url VARCHAR(512) NOT NULL DEFAULT '',
     image_urls TEXT NULL,
     sort_order INT NOT NULL DEFAULT 0,
@@ -58,6 +59,11 @@ if (!$hasColumn) {
     } catch (PDOException $e) {
         // игнорируем, если колонка уже есть или нет прав
     }
+}
+// Миграция: цена товара
+$hasProductPrice = $pdo->query("SHOW COLUMNS FROM products LIKE 'price'")->fetch();
+if (!$hasProductPrice) {
+    try { $pdo->exec("ALTER TABLE products ADD COLUMN price DECIMAL(12,2) NULL"); } catch (PDOException $e) {}
 }
 // Миграция: вложения в заявках
 $hasLeadAttachmentName = $pdo->query("SHOW COLUMNS FROM leads LIKE 'attachment_name'")->fetch();
